@@ -1,6 +1,6 @@
-import { NextAuthOptions } from "next-auth"
-import Google from "next-auth/providers/google"
-import prisma from "./prisma"
+import { getServerSession, NextAuthOptions } from "next-auth";
+import Google from "next-auth/providers/google";
+import prisma from "./prisma";
 
 export const authOptions = {
   providers: [
@@ -10,54 +10,56 @@ export const authOptions = {
     }),
   ],
   session: {
-    strategy: "jwt"
+    strategy: "jwt",
   },
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
-  async signIn({ user }) {
-    const existingUser = await prisma.user.findUnique({
+    async signIn({ user }) {
+      const existingUser = await prisma.user.findUnique({
         where: {
-            email: user.email!
-        }
-    })
-    if (!existingUser) {
-      await prisma.user.create({
-        data: {
+          email: user.email!,
+        },
+      });
+      if (!existingUser) {
+        await prisma.user.create({
+          data: {
             email: user.email!,
             name: user.name,
-            role: "USER"
+            role: "USER",
+          },
+        });
+      }
+      return true;
+    },
+    async jwt({ token, user, account }) {
+      if (account && user?.email) {
+        const dbUser = await prisma.user.findUnique({
+          where: { email: user.email },
+          select: {
+            id: true,
+            email: true,
+            role: true,
+          },
+        });
+
+        if (dbUser) {
+          token.id = dbUser.id;
+          token.email = dbUser.email;
+          token.role = dbUser.role;
         }
-      })
-    } 
-    return true
-  },
-  async jwt({ token, user, account }) {
-    if (account && user?.email) {
-    const dbUser = await prisma.user.findUnique({
-      where: { email: user.email },
-      select: {
-        id: true,
-        email: true,
-        role: true,
-      },
-    })
+      }
 
-    if (dbUser) {
-      token.id = dbUser.id
-      token.email = dbUser.email
-      token.role = dbUser.role
-    }
-  }
-
-  return token
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id as string;
+        session.user.email = token.email as string;
+        session.user.role = token.role as string;
+      }
+      return session;
+    },
   },
-  async session({ session, token, user }) {
-    if (session.user) {
-      session.user.id = token.id as string
-      session.user.email = token.email as string
-      session.user.role = token.role as string
-    }
-    return session
-  }
-}
-} satisfies NextAuthOptions
+} satisfies NextAuthOptions;
+
+export const auth = () => getServerSession(authOptions);
