@@ -36,7 +36,8 @@ export default async function TaskView({
   return (
     <div>
       <h2>{task.title}</h2>
-      <p>{task.description}</p>
+      <p>Description: {task.description}</p>
+      <p>Status: {task.status}</p>
       <p>Assigned to {task.assignedTo.email}</p>
       <p>Created by {task.createdBy.email}</p>
       <p>
