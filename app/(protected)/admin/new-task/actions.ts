@@ -2,15 +2,16 @@
 
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { redirect } from "next/navigation";
 
 export async function createTask(formData: FormData) {
   const session = await auth();
   if (!session) {
-    throw new Error("UNAUTHORIZED");
+    redirect("/api/auth/signin");
   }
 
   if (session.user.role !== "ADMIN") {
-    throw new Error("FORBIDDEN");
+    redirect("/forbidden");
   }
 
   const title = formData.get("title");

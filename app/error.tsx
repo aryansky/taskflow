@@ -1,5 +1,10 @@
-"use client"
+"use client";
 
 export default function Error() {
-    return <div>Something went wrong</div>
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center">
+      <h1 className="text-3xl font-bold">500 – Error</h1>
+      <p className="mt-2 text-gray-500">Something went wrong.</p>
+    </div>
+  );
 }
