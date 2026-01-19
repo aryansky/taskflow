@@ -2,9 +2,9 @@ import { Button } from "@/components/ui/button";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
-import { updateTaskStatus } from "../actions";
+import { updateTask } from "./actions";
 
-export default async function TaskView({
+export default async function EditTask({
   params,
 }: {
   params: Promise<{ taskId: string }>;
@@ -37,19 +37,17 @@ export default async function TaskView({
 
   return (
     <div>
-      <h2>{task.title}</h2>
-      <p>Description: {task.description}</p>
-      <p>Status: {task.status}</p>
-      <p>Assigned to {task.assignedTo.email}</p>
-      <p>Created by {task.createdBy.email}</p>
-      <p>
-        Due date: {task.dueDate ? task.dueDate.toLocaleDateString() : "N/A"}
-      </p>
-      <form action={updateTaskStatus.bind(null, task.id, "IN_PROGRESS")}>
-        <Button type="submit">Start</Button>
-      </form>
-      <form action={updateTaskStatus.bind(null, task.id, "DONE")}>
-        <Button type="submit">Complete</Button>
+      <h1>Edit Task</h1>
+      <form action={updateTask.bind(null, task.id)}>
+        <input
+          name="title"
+          placeholder="Title"
+          defaultValue={task.title}
+          required
+        />
+        <textarea name="description" defaultValue={task.description} required />
+        <input type="email" value={task.assignedTo.email} disabled />
+        <Button type="submit">Save</Button>
       </form>
     </div>
   );

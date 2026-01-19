@@ -38,7 +38,7 @@ export async function createTask(formData: FormData) {
     throw new Error("No user found to assign to");
   }
 
-  await prisma.task.create({
+  const task = await prisma.task.create({
     data: {
       title,
       description,
@@ -54,4 +54,6 @@ export async function createTask(formData: FormData) {
       },
     },
   });
+
+  redirect(`/tasks/${task.id}`);
 }
