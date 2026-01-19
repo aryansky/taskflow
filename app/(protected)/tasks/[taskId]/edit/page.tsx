@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
-import { updateTask } from "./actions";
+import { deleteTask, updateTask } from "../../actions";
 
 export default async function EditTask({
   params,
@@ -48,6 +48,11 @@ export default async function EditTask({
         <textarea name="description" defaultValue={task.description} required />
         <input type="email" value={task.assignedTo.email} disabled />
         <Button type="submit">Save</Button>
+      </form>
+      <form action={deleteTask.bind(null, task.id)}>
+        <Button variant="destructive" type="submit">
+          Delete
+        </Button>
       </form>
     </div>
   );
