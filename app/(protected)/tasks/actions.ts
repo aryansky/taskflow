@@ -91,6 +91,5 @@ export async function deleteTask(taskId: string) {
     where: { id: taskId },
   });
 
-  revalidatePath("/tasks");
   redirect("/tasks");
 }

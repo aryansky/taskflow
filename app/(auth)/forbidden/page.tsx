@@ -1,3 +1,6 @@
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+
 export default function ForbiddenPage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
@@ -5,6 +8,9 @@ export default function ForbiddenPage() {
       <p className="mt-2 text-gray-500">
         You don’t have permission to access that page.
       </p>
+      <Link href={"/"}>
+        <Button className="m-2">Home</Button>
+      </Link>
     </div>
   );
 }

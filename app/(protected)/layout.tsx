@@ -1,3 +1,4 @@
+import Navbar from "@/components/ui/navbar";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
@@ -11,5 +12,10 @@ export default async function AuthenticationLayout({
   if (!session) {
     redirect("/api/auth/signin");
   }
-  return <section>{children}</section>;
+  return (
+    <>
+      <Navbar />
+      <section>{children}</section>
+    </>
+  );
 }
