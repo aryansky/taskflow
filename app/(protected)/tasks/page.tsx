@@ -1,5 +1,7 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import TaskCard from "./components/TaskCard";
+import Link from "next/link";
 
 export default async function AllTaskView() {
   const session = await auth();
@@ -30,22 +32,18 @@ export default async function AllTaskView() {
   }
 
   return (
-    <div>
+    <div className="flex gap-4 m-10 flex-wrap justify-evenly">
       {tasks.map((task) => {
         return (
-          <div key={task.id} className="border p-4 m-4">
-            <a href={`/tasks/${task.id}`}>
-              <h2 className="text-blue-500 underline">{task.title}</h2>
-            </a>
-            <p>Description: {task.description}</p>
-            <p>Status: {task.status}</p>
-            <p>Assigned to {task.assignedTo.email}</p>
-            <p>Created by {task.createdBy.email}</p>
-            <p>
-              Due date:{" "}
-              {task.dueDate ? task.dueDate.toLocaleDateString() : "N/A"}
-            </p>
-          </div>
+          <Link key={task.id} href={`/tasks/${task.id}`}>
+            <TaskCard
+              className="transition-all border w-md hover:cursor-pointer hover:-translate-y-1 hover:shadow-xl"
+              {...task}
+              taskId={task.id}
+              assignedToEmail={task.assignedTo.email}
+              createdByEmail={task.createdBy.email}
+            />
+          </Link>
         );
       })}
     </div>

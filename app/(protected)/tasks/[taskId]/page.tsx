@@ -1,8 +1,7 @@
-import { Button } from "@/components/ui/button";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
-import { updateTaskStatus } from "../actions";
+import TaskCard from "../components/TaskCard";
 
 export default async function TaskView({
   params,
@@ -36,21 +35,17 @@ export default async function TaskView({
   }
 
   return (
-    <div>
-      <h2>{task.title}</h2>
-      <p>Description: {task.description}</p>
-      <p>Status: {task.status}</p>
-      <p>Assigned to {task.assignedTo.email}</p>
-      <p>Created by {task.createdBy.email}</p>
-      <p>
-        Due date: {task.dueDate ? task.dueDate.toLocaleDateString() : "N/A"}
-      </p>
-      <form action={updateTaskStatus.bind(null, task.id, "IN_PROGRESS")}>
-        <Button type="submit">Start</Button>
-      </form>
-      <form action={updateTaskStatus.bind(null, task.id, "DONE")}>
-        <Button type="submit">Complete</Button>
-      </form>
-    </div>
+    <TaskCard
+      className="mx-auto"
+      title={task.title}
+      description={task.description}
+      status={task.status}
+      assignedToEmail={task.assignedTo.email}
+      createdByEmail={task.createdBy.email}
+      createdAt={task.createdAt}
+      dueDate={task.dueDate}
+      taskId={task.id}
+      showActions
+    />
   );
 }
