@@ -8,17 +8,19 @@ interface TaskCardProps {
   dueDate: Date | null;
   status: Status;
   showActions?: boolean;
-  className?: string;
 }
 
-import { Button } from "@/components/ui/button";
-import TaskDescription from "./TaskDescription";
-import TaskHeader from "./TaskHeader";
-import TaskMeta from "./TaskMeta";
 import TaskStatus from "./TaskStatus";
 import { Status } from "@/lib/generated/prisma/enums";
-import clsx from "clsx";
 import TaskActions from "./TaskActions";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default function TaskCard({
   taskId,
@@ -30,39 +32,28 @@ export default function TaskCard({
   dueDate,
   status,
   showActions = false,
-  className,
 }: TaskCardProps) {
   return (
-    <div
-      className={clsx(
-        "flex flex-col items-center bg-gray-100 p-4 rounded",
-        className
-      )}
-    >
-      <div className="flex gap-5 m-4 w-fit">
-        <TaskHeader taskTitle={title} />
-        <TaskStatus status={status} />
-      </div>
-      <div className="m-4 mt-0 flex flex-col items-center w-fit">
-        <TaskDescription
-          className="text-wrap w-md p-4 rounded"
-          taskDescription={description}
-        />
-        <TaskMeta
-          assignedToEmail={assignedToEmail}
-          createdByEmail={createdByEmail}
-          createdAt={createdAt}
-        />
-        <div className="flex gap-2">
-          <Button
-            variant={"outline"}
-            className="pointer-events-none transition-colors"
-          >
-            Due Date: {dueDate ? dueDate.toLocaleDateString() : "N/A"}
-          </Button>
-          {showActions && <TaskActions status={status} taskId={taskId} />}
+    <Card className="w-100 h-full hover:shadow-md transition">
+      <CardHeader className="flex flex-row items-start justify-between gap-2">
+        <div>
+          <CardTitle className="text-base">{title}</CardTitle>
+          <CardDescription className="text-sm">
+            Assigned to {assignedToEmail}
+          </CardDescription>
         </div>
-      </div>
-    </div>
+
+        <TaskStatus status={status} />
+      </CardHeader>
+
+      <CardContent className="text-sm text-muted-foreground">
+        {description}
+      </CardContent>
+
+      <CardFooter className="flex justify-between text-sm">
+        <span>Due: {dueDate ? dueDate.toLocaleDateString() : "—"}</span>
+        {showActions && <TaskActions status={status} taskId={taskId} />}
+      </CardFooter>
+    </Card>
   );
 }

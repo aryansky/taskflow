@@ -1,6 +1,6 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
-import { createTask } from "./actions";
 import {
   Field,
   FieldError,
@@ -12,8 +12,8 @@ import { InputGroup, InputGroupTextarea } from "@/components/ui/input-group";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 import { useRouter } from "next/navigation";
-import { createTaskSchema } from "../../tasks/schema";
-import { ChevronDownIcon } from "lucide-react";
+import { updateTaskSchema } from "../../tasks/schema";
+import { ChevronDownIcon, Trash } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -21,23 +21,55 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { deleteTask, updateTask } from "../actions";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import Link from "next/link";
 
-export default function CreateTaskForm() {
+export default function UpdateTaskForm({
+  taskId,
+  title,
+  description,
+  dueDate,
+  assignedToEmail,
+}: {
+  taskId: string;
+  title: string;
+  description: string;
+  dueDate: Date | null;
+  assignedToEmail: string;
+}) {
   const {
     register,
     handleSubmit,
     control,
     setError,
     formState: { errors, isSubmitting },
-  } = useForm<z.infer<typeof createTaskSchema>>();
+  } = useForm<z.infer<typeof updateTaskSchema>>({
+    defaultValues: {
+      title: title,
+      description: description,
+      assignedToEmail: assignedToEmail,
+      dueDate: dueDate,
+    },
+  });
   const router = useRouter();
 
-  async function onSubmit(data: z.infer<typeof createTaskSchema>) {
-    const response = await createTask(data);
+  async function onSubmit(data: z.infer<typeof updateTaskSchema>) {
+    const response = await updateTask(taskId, data);
 
     if (response.errors) {
       Object.entries(response.errors).forEach(([field, messages]) => {
-        setError(field as keyof z.infer<typeof createTaskSchema>, {
+        setError(field as keyof z.infer<typeof updateTaskSchema>, {
           type: "server",
           message: messages[0],
         });
@@ -89,6 +121,7 @@ export default function CreateTaskForm() {
               placeholder="abc@test.com"
               autoComplete="off"
               type="email"
+              disabled
             />
             {errors.assignedToEmail && (
               <FieldError
@@ -138,14 +171,61 @@ export default function CreateTaskForm() {
               <FieldError errors={[{ message: errors.dueDate.message }]} />
             )}
           </Field>
-          <div className="flex justify-end">
+          <div className="flex gap-2 justify-between">
             <Button
               className="bg-green-600 hover:bg-green-700"
               disabled={isSubmitting}
               type="submit"
             >
-              Create
+              Save Changes
             </Button>
+            <div className="flex gap-2">
+              {!isSubmitting && (
+                <Link href={`/tasks/${taskId}`}>
+                  <Button
+                    type="button"
+                    className="bg-amber-500 hover:bg-amber-600"
+                  >
+                    Go Back
+                  </Button>
+                </Link>
+              )}
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    type="button"
+                    disabled={isSubmitting}
+                    variant="destructive"
+                  >
+                    Delete
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Are you absolutely sure?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete
+                      your task.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      type="button"
+                      className="bg-red-700 hover:bg-red-800"
+                      onClick={() => {
+                        deleteTask(taskId);
+                      }}
+                    >
+                      <Trash />
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
           </div>
         </FieldGroup>
       </form>

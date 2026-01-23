@@ -4,7 +4,7 @@ const taskSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
   assignedToEmail: z.email("Invalid email"),
-  dueDate: z.date().optional(),
+  dueDate: z.date().nullable(),
 });
 
 export const createTaskSchema = taskSchema;

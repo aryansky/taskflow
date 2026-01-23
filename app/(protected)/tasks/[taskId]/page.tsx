@@ -1,7 +1,10 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
-import TaskCard from "../_components/TaskCard";
+import TaskActions from "../_components/TaskActions";
+import TaskStatus from "../_components/TaskStatus";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default async function TaskView({
   params,
@@ -35,17 +38,45 @@ export default async function TaskView({
   }
 
   return (
-    <TaskCard
-      className="mx-auto"
-      title={task.title}
-      description={task.description}
-      status={task.status}
-      assignedToEmail={task.assignedTo.email}
-      createdByEmail={task.createdBy.email}
-      createdAt={task.createdAt}
-      dueDate={task.dueDate}
-      taskId={task.id}
-      showActions
-    />
+    // <TaskCard
+    //   title={task.title}
+    //   description={task.description}
+    //   status={task.status}
+    //   assignedToEmail={task.assignedTo.email}
+    //   createdByEmail={task.createdBy.email}
+    //   createdAt={task.createdAt}
+    //   dueDate={task.dueDate}
+    //   taskId={task.id}
+    //   showActions
+    // />
+    <div className="flex flex-col items-center w-full">
+      <article className="prose  mt-8">
+        <div className="flex justify-between items-center">
+          <h1 className="flex justify-between items-center mb-0 w-xl">
+            {task.title}
+          </h1>
+          <div className="w-20">
+            <TaskStatus status={task.status} />
+          </div>
+        </div>
+
+        <p>{task.description}</p>
+        <p className="lead-sm">
+          Assigned to: {task.assignedTo.email}
+          <br />
+          Created by: {task.createdBy.email}
+        </p>
+        <div className="flex justify-between items-center">
+          <h4>Due: {task.dueDate ? task.dueDate.toLocaleDateString() : "-"}</h4>
+          <div className="flex gap-2">
+            <Link href={`/tasks/${taskId}/edit`}>
+              <Button className="bg-amber-500 hover:bg-amber-600">Edit</Button>
+            </Link>
+            <TaskActions taskId={taskId} status={task.status} />
+          </div>
+        </div>
+      </article>
+      <hr className="w-full mt-8" />
+    </div>
   );
 }

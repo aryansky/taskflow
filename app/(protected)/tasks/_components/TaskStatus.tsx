@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Status } from "@/lib/generated/prisma/enums";
 import { cva } from "class-variance-authority";
 
@@ -26,8 +26,10 @@ const statusTextMap: Record<Status, string> = {
 
 export default function TaskStatus({ status }: { status: Status }) {
   return (
-    <Button variant={"default"} className={statusVariants({ status })}>
-      {statusTextMap[status]}
-    </Button>
+    <>
+      <Badge variant={"default"} className={statusVariants({ status })}>
+        {statusTextMap[status]}
+      </Badge>
+    </>
   );
 }

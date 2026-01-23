@@ -5,6 +5,9 @@ import prisma from "@/lib/prisma";
 import { Status } from "@/lib/generated/prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import z from "zod";
+import { updateTaskSchema } from "./schema";
+import { TaskState } from "./types";
 
 export async function updateTaskStatus(taskId: string, newStatus: Status) {
   const session = await auth();
@@ -35,7 +38,10 @@ export async function updateTaskStatus(taskId: string, newStatus: Status) {
   revalidatePath(`/tasks/${taskId}`);
 }
 
-export async function updateTask(taskId: string, formData: FormData) {
+export async function updateTask(
+  taskId: string,
+  data: z.infer<typeof updateTaskSchema>
+): Promise<TaskState> {
   const session = await auth();
   const userId = session!.user.id;
   const task = await prisma.task.findUnique({ where: { id: taskId } });
@@ -49,15 +55,9 @@ export async function updateTask(taskId: string, formData: FormData) {
     throw new Error("FORBIDDEN");
   }
 
-  const title = formData.get("title");
-  const description = formData.get("description");
-
-  if (typeof title !== "string") {
-    throw new Error("Invalid title");
-  }
-
-  if (typeof description !== "string") {
-    throw new Error("Invalid description");
+  const parsed = updateTaskSchema.safeParse(data);
+  if (!parsed.success) {
+    return { errors: z.flattenError(parsed.error).fieldErrors };
   }
 
   await prisma.task.update({
@@ -65,12 +65,17 @@ export async function updateTask(taskId: string, formData: FormData) {
       id: task.id,
     },
     data: {
-      title,
-      description,
+      title: parsed.data.title,
+      description: parsed.data.description,
+      dueDate: parsed.data.dueDate,
     },
   });
 
-  redirect(`/tasks/${taskId}`);
+  return {
+    success: {
+      redirectPath: `/tasks/${taskId}`,
+    },
+  };
 }
 
 export async function deleteTask(taskId: string) {
