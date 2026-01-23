@@ -3,45 +3,55 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import { z } from "zod";
+import { TaskState } from "@/app/(protected)/tasks/types";
+import { createTaskSchema } from "@/app/(protected)/tasks/schema";
 
-export async function createTask(formData: FormData) {
+export async function createTask(
+  data: z.infer<typeof createTaskSchema>
+): Promise<TaskState> {
   const session = await auth();
-  if (!session) {
-    redirect("/api/auth/signin");
+
+  if (!session) redirect("/api/auth/signin");
+  if (session.user.role !== "ADMIN") redirect("/forbidden");
+
+  const parsed = createTaskSchema.safeParse(data);
+  if (!parsed.success) {
+    return { errors: z.flattenError(parsed.error).fieldErrors };
   }
 
-  if (session.user.role !== "ADMIN") {
-    redirect("/forbidden");
+  if (parsed.data.dueDate) {
+    const tomorrow = new Date();
+    tomorrow.setHours(0, 0, 0, 0);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const dueDate = new Date(parsed.data.dueDate);
+    dueDate.setHours(0, 0, 0, 0);
+
+    if (dueDate < tomorrow) {
+      return {
+        errors: {
+          dueDate: ["Due date must be from tomorrow onward"],
+        },
+      };
+    }
   }
 
-  const title = formData.get("title");
-  const description = formData.get("description");
-  const assignedToEmail = formData.get("assignedToEmail");
-
-  if (typeof title !== "string") {
-    throw new Error("Invalid title");
-  }
-
-  if (typeof description !== "string") {
-    throw new Error("Invalid description");
-  }
-
-  if (typeof assignedToEmail !== "string") {
-    throw new Error("Invalid assignee");
-  }
   const assignedToUser = await prisma.user.findUnique({
-    where: {
-      email: assignedToEmail,
-    },
+    where: { email: parsed.data.assignedToEmail },
   });
   if (!assignedToUser) {
-    throw new Error("No user found to assign to");
+    return {
+      errors: {
+        assignedToEmail: ["User Not Found"],
+      },
+    };
   }
 
   const task = await prisma.task.create({
     data: {
-      title,
-      description,
+      title: parsed.data.title,
+      description: parsed.data.description,
       assignedTo: {
         connect: {
           id: assignedToUser.id,
@@ -52,8 +62,13 @@ export async function createTask(formData: FormData) {
           id: session.user.id,
         },
       },
+      dueDate: parsed.data.dueDate,
     },
   });
 
-  redirect(`/tasks/${task.id}`);
+  return {
+    success: {
+      redirectPath: `/tasks/${task.id}`,
+    },
+  };
 }

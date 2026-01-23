@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
-import TaskCard from "../components/TaskCard";
+import TaskCard from "../_components/TaskCard";
 
 export default async function TaskView({
   params,

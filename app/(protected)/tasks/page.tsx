@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import TaskCard from "./components/TaskCard";
+import TaskCard from "./_components/TaskCard";
 import Link from "next/link";
 
 export default async function AllTaskView() {
