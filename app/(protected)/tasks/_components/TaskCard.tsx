@@ -27,8 +27,6 @@ export default function TaskCard({
   title,
   description,
   assignedToEmail,
-  createdAt,
-  createdByEmail,
   dueDate,
   status,
   showActions = false,

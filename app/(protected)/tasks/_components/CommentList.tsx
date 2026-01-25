@@ -1,7 +1,9 @@
 import prisma from "@/lib/prisma";
 import Comment from "./Comment";
+import { auth } from "@/lib/auth";
 
 export default async function CommentList({ taskId }: { taskId: string }) {
+  const session = await auth();
   const comments = await prisma.comment.findMany({
     where: {
       taskId: taskId,
@@ -28,6 +30,10 @@ export default async function CommentList({ taskId }: { taskId: string }) {
             text={comment.text}
             userEmail={comment.user.email}
             commentId={comment.id}
+            showCommentActions={
+              comment.userId === session!.user.id ||
+              session!.user.role === "ADMIN"
+            }
           />
         );
       })}
