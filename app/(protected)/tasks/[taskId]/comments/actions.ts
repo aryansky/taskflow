@@ -62,3 +62,26 @@ export async function createComment(
     success: true,
   };
 }
+
+export async function deleteComment(commentId: string) {
+  const session = await auth();
+  const comment = await prisma.comment.findUnique({
+    where: {
+      id: commentId,
+    },
+  });
+
+  if (!comment) throw new Error("NO_COMMENT_FOUND");
+
+  if (comment.userId !== session!.user.id && session!.user.role !== "ADMIN") {
+    throw new Error("FORBIDDEN");
+  }
+
+  await prisma.comment.delete({
+    where: {
+      id: commentId,
+    },
+  });
+
+  revalidatePath(`/tasks/${comment.taskId}`);
+}

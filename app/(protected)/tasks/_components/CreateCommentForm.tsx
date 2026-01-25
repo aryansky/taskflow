@@ -47,6 +47,7 @@ export default function CreateCommentForm({ taskId }: { taskId: string }) {
               placeholder="Comment"
               rows={8}
               className="min-h-16 resize-none"
+              maxLength={1000}
             />
           </InputGroup>
           {errors.text && (

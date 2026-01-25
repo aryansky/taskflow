@@ -14,9 +14,11 @@ export default async function CommentList({ taskId }: { taskId: string }) {
       },
     },
   });
-  if (!comments) {
-    return <h3>No Comments yet.</h3>;
+
+  if (comments.length === 0) {
+    return <p className="text-sm text-muted-foreground">No comments yet.</p>;
   }
+
   return (
     <div>
       {comments.map((comment) => {
@@ -25,6 +27,7 @@ export default async function CommentList({ taskId }: { taskId: string }) {
             key={comment.id}
             text={comment.text}
             userEmail={comment.user.email}
+            commentId={comment.id}
           />
         );
       })}
