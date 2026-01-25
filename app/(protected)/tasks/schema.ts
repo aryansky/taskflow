@@ -7,5 +7,12 @@ const taskSchema = z.object({
   dueDate: z.date().nullable(),
 });
 
+export const commentSchema = z.object({
+  text: z
+    .string()
+    .min(1, "Comment text cannot be empty")
+    .max(1000, "Comment cannot exceed 1000 characters"),
+});
+
 export const createTaskSchema = taskSchema;
 export const updateTaskSchema = taskSchema;

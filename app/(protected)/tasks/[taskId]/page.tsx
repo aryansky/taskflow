@@ -1,10 +1,12 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import TaskActions from "../_components/TaskActions";
 import TaskStatus from "../_components/TaskStatus";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import CreateCommentForm from "../_components/CreateCommentForm";
+import CommentList from "../_components/CommentList";
 
 export default async function TaskView({
   params,
@@ -27,7 +29,13 @@ export default async function TaskView({
       },
     },
   });
-  if (!task) notFound();
+  if (!task) {
+    return (
+      <div className="prose flex justify-center mt-8">
+        <h1>No task found.</h1>
+      </div>
+    );
+  }
 
   if (
     session!.user.role !== "ADMIN" &&
@@ -38,17 +46,6 @@ export default async function TaskView({
   }
 
   return (
-    // <TaskCard
-    //   title={task.title}
-    //   description={task.description}
-    //   status={task.status}
-    //   assignedToEmail={task.assignedTo.email}
-    //   createdByEmail={task.createdBy.email}
-    //   createdAt={task.createdAt}
-    //   dueDate={task.dueDate}
-    //   taskId={task.id}
-    //   showActions
-    // />
     <div className="flex flex-col items-center w-full">
       <article className="prose  mt-8">
         <div className="flex justify-between items-center">
@@ -77,6 +74,15 @@ export default async function TaskView({
         </div>
       </article>
       <hr className="w-full mt-8" />
+      <div className="w-xl prose m-4">
+        <h2 className="">Comments</h2>
+      </div>
+      <div className="w-xl">
+        <CreateCommentForm taskId={task.id} />
+      </div>
+      <div className="w-xl">
+        <CommentList taskId={task.id} />
+      </div>
     </div>
   );
 }

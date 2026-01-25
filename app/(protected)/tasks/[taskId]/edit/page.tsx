@@ -1,8 +1,6 @@
-import { Button } from "@/components/ui/button";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { notFound, redirect } from "next/navigation";
-import { deleteTask } from "../../actions";
+import { redirect } from "next/navigation";
 import UpdateTaskForm from "../../_components/UpdateTaskForm";
 
 export default async function EditTask({
@@ -26,7 +24,13 @@ export default async function EditTask({
       },
     },
   });
-  if (!task) notFound();
+  if (!task) {
+    return (
+      <div className="prose flex justify-center mt-8">
+        <h1>No task found.</h1>
+      </div>
+    );
+  }
 
   if (
     session!.user.role !== "ADMIN" &&

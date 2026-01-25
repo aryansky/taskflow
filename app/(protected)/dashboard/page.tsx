@@ -3,13 +3,15 @@ export default async function Dashboard() {
   const session = await auth();
 
   return (
-    <div className="mt-40 flex flex-col items-center justify-center">
-      <h2 className="text-xl font-bold text-gray-700">
-        Email: {session!.user.email}
-      </h2>
-      <h2 className="text-xl font-bold text-gray-700">
-        Role: {session!.user.role}
-      </h2>
+    <div className="flex flex-col items-center w-full">
+      <article className="prose prose-sm mt-8">
+        <h3 className="flex justify-between items-center mb-0 w-xl">
+          Email: {session!.user.email}
+        </h3>
+        <h3 className="flex justify-between items-center mb-0 w-xl">
+          Role: {session!.user.role}
+        </h3>
+      </article>
     </div>
   );
 }
