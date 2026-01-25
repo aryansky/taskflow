@@ -37,7 +37,6 @@ export default async function AllTaskView() {
         return (
           <Link key={task.id} href={`/tasks/${task.id}`}>
             <TaskCard
-              className="transition-all border w-md hover:cursor-pointer hover:-translate-y-1 hover:shadow-xl"
               {...task}
               taskId={task.id}
               assignedToEmail={task.assignedTo.email}

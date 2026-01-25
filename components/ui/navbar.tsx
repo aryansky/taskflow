@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import LogoutButton from "./logout-button";
 import NavLinks from "./nav-links";
 import LoginButton from "./login-button";
+import { ThemeToggle } from "./theme-toggle";
 
 export default async function Navbar() {
   const session = await auth();
@@ -14,7 +15,10 @@ export default async function Navbar() {
         </h2>
       </div>
       <NavLinks isAdmin={session?.user.role === "ADMIN"} />
-      <div>{session ? <LogoutButton /> : <LoginButton />}</div>
+      <div className="flex items-center gap-2">
+        <ThemeToggle />
+        {session ? <LogoutButton /> : <LoginButton />}
+      </div>
     </nav>
   );
 }

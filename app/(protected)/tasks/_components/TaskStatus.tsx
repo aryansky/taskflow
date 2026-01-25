@@ -11,9 +11,21 @@ export const statusVariants = cva(
         IN_PROGRESS: "bg-blue-500",
         DONE: "bg-green-500",
       },
+      overdue: {
+        true: "bg-red-700",
+        false: "",
+      },
     },
+    compoundVariants: [
+      {
+        status: "DONE",
+        overdue: true,
+        className: "bg-green-500", // DONE overrides overdue
+      },
+    ],
     defaultVariants: {
       status: "TBD",
+      overdue: false,
     },
   }
 );
@@ -24,12 +36,19 @@ const statusTextMap: Record<Status, string> = {
   DONE: "COMPLETED",
 };
 
-export default function TaskStatus({ status }: { status: Status }) {
+export default function TaskStatus({
+  status,
+  isOverdue = false,
+}: {
+  status: Status;
+  isOverdue?: boolean;
+}) {
   return (
-    <>
-      <Badge variant={"default"} className={statusVariants({ status })}>
-        {statusTextMap[status]}
-      </Badge>
-    </>
+    <Badge
+      variant={"default"}
+      className={statusVariants({ status, overdue: isOverdue })}
+    >
+      {isOverdue && status !== "DONE" ? "OVERDUE" : statusTextMap[status]}
+    </Badge>
   );
 }

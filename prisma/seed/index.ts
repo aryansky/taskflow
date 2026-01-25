@@ -4,6 +4,7 @@ import { seedEmails } from "./data/users";
 import { seedTaskTitles } from "./data/tasks";
 import { pickRandom } from "./utils/random";
 import { seedComments } from "./data/comments";
+import { randomDate } from "./utils/randomDate";
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
@@ -16,6 +17,10 @@ const prisma = new PrismaClient({
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 async function main() {
+  // clear db
+  await prisma.comment.deleteMany();
+  await prisma.task.deleteMany();
+
   //create admin
   await prisma.user.upsert({
     where: { email: "admin@test.com" },
@@ -47,6 +52,7 @@ async function main() {
   for (let i = 0; i < TASK_COUNT; i++) {
     const creator = pickRandom(users);
     const assignee = pickRandom(users);
+    const date = randomDate(new Date("2026-01-01"), new Date("2026-03-01"));
 
     await prisma.task.create({
       data: {
@@ -56,6 +62,7 @@ async function main() {
         status: pickRandom(["TBD", "IN_PROGRESS", "DONE"]) as Status,
         createdBy: { connect: { id: creator.id } },
         assignedTo: { connect: { id: assignee.id } },
+        dueDate: date,
       },
     });
   }
@@ -63,7 +70,7 @@ async function main() {
   const tasks = await prisma.task.findMany();
 
   for (const task of tasks) {
-    for (let i = 0; i < Math.floor(Math.random() * 8); i++) {
+    for (let i = 0; i < Math.floor(Math.random() * 14); i++) {
       await prisma.comment.create({
         data: {
           text: pickRandom(seedComments),

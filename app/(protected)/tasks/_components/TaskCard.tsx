@@ -31,6 +31,7 @@ export default function TaskCard({
   status,
   showActions = false,
 }: TaskCardProps) {
+  const isOverdue = dueDate && dueDate < new Date();
   return (
     <Card className="w-100 h-full hover:shadow-md transition">
       <CardHeader className="flex flex-row items-start justify-between gap-2">
@@ -41,7 +42,7 @@ export default function TaskCard({
           </CardDescription>
         </div>
 
-        <TaskStatus status={status} />
+        <TaskStatus status={status} isOverdue={isOverdue ?? undefined} />
       </CardHeader>
 
       <CardContent className="text-sm text-muted-foreground">

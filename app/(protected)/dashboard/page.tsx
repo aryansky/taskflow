@@ -4,7 +4,7 @@ export default async function Dashboard() {
 
   return (
     <div className="flex flex-col items-center w-full">
-      <article className="prose prose-sm mt-8">
+      <article className="prose dark:prose-invert prose-sm mt-8">
         <h3 className="flex justify-between items-center mb-0 w-xl">
           Email: {session!.user.email}
         </h3>

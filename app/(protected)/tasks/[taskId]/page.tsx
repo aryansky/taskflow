@@ -37,6 +37,8 @@ export default async function TaskView({
     );
   }
 
+  const isOverdue = task.dueDate && new Date() > task.dueDate;
+
   if (
     session!.user.role !== "ADMIN" &&
     session!.user.id !== task.assignedToId &&
@@ -47,13 +49,16 @@ export default async function TaskView({
 
   return (
     <div className="flex flex-col items-center w-full">
-      <article className="prose  mt-8">
+      <article className="prose dark:prose-invert mt-8">
         <div className="flex justify-between items-center">
           <h1 className="flex justify-between items-center mb-0 w-xl">
             {task.title}
           </h1>
           <div className="w-20">
-            <TaskStatus status={task.status} />
+            <TaskStatus
+              status={task.status}
+              isOverdue={isOverdue ?? undefined}
+            />
           </div>
         </div>
 
@@ -74,7 +79,7 @@ export default async function TaskView({
         </div>
       </article>
       <hr className="w-full mt-8" />
-      <div className="w-xl prose m-4">
+      <div className="w-xl prose dark:prose-invert m-4">
         <h2 className="">Comments</h2>
       </div>
       <div className="w-xl">
