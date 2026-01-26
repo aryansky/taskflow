@@ -21,6 +21,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Calendar } from "lucide-react";
 
 export default function TaskCard({
   taskId,
@@ -50,7 +51,10 @@ export default function TaskCard({
       </CardContent>
 
       <CardFooter className="flex justify-between text-sm">
-        <span>Due: {dueDate ? dueDate.toLocaleDateString() : "—"}</span>
+        <span className="flex gap-1 items-center">
+          <Calendar size={20} /> Due:{" "}
+          {dueDate ? dueDate.toLocaleDateString() : "—"}
+        </span>
         {showActions && <TaskActions status={status} taskId={taskId} />}
       </CardFooter>
     </Card>

@@ -12,7 +12,7 @@ export default function Comment({
   showCommentActions?: boolean;
 }) {
   return (
-    <div className="border rounded p-4 m-2 flex justify-between">
+    <div className="border dark:border-gray-500 rounded p-4 m-4 flex justify-between">
       <div>
         <p>{text}</p>
         <small>By {userEmail}</small>

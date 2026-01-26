@@ -1,18 +1,18 @@
 # TaskFlow
 
-TaskFlow is a task management application built with a **server-first mindset**, focusing on correctness, clarity, and clean data flow over premature polish.
+TaskFlow is a task management application built with a **server-first mindset**, prioritizing correctness, explicit data flow, and long-term maintainability over premature polish.
 
-This project is intentionally developed in **phases**:
+The project is developed intentionally in **phases**:
 
-- **V1** locks in fundamentals and behavior
-- **V2** introduces intentional complexity and automation
+- **V1** — lock fundamentals and behavior
+- **V2** — introduce collaboration and controlled complexity
 
 ---
 
 ## Tech Stack
 
 - **Next.js (App Router)**
-- **Auth.js (NextAuth) – Google OAuth**
+- **Auth.js (NextAuth)** — Google OAuth
 - **Prisma + PostgreSQL**
 - **Server Actions**
 - **TypeScript (strict)**
@@ -28,19 +28,21 @@ This project is intentionally developed in **phases**:
 - Minimal client-side state
 - Explicit data flow (no hidden magic)
 - UI clarity over visual flair
-- V1 is for correctness, not impressiveness
+- Features are added only when behavior is well understood
 
 ---
 
-## Features (V1)
+## Features
 
 ### Authentication & Authorization
 
 - Google OAuth authentication
 - Role-based access control:
+
   - `ADMIN`
   - `USER`
-- All authorization enforced server-side
+
+- All permissions enforced server-side
 
 ---
 
@@ -50,34 +52,49 @@ This project is intentionally developed in **phases**:
 - Edit task (admin / creator / assignee)
 - View single task with metadata
 - View task list:
+
   - Admin sees all tasks
   - Users see assigned + created tasks
+
 - Delete task
 - Update task status:
+
   - `TBD`
   - `IN_PROGRESS`
   - `DONE`
 
 ---
 
-### Due Dates
+### Due Dates & Overdue
 
 - Optional due date on tasks
 - Due date must be **from tomorrow onward**
 - Validation enforced server-side
 - Past dates and today disabled in UI calendar
+- **Overdue is a computed state**:
 
-> Note: Overdue is intentionally **not** a stored status in V1.
+  - `dueDate < today`
+  - `status !== DONE`
+
+- Overdue is **visual only**, not stored
+
+---
+
+### Comments (V2)
+
+- Add comments to tasks
+- Delete comments (author or admin only)
+- Permissions enforced server-side
+- Comment list revalidated after mutations
 
 ---
 
 ### Forms & Validation
 
-- `react-hook-form` for client-side form control
+- `react-hook-form` for client-side control
 - Zod schemas shared between client and server
 - Server-side validation is authoritative
 - Server errors mapped back to form fields explicitly
-- No reliance on client-only validation for correctness
 
 ---
 
@@ -85,82 +102,59 @@ This project is intentionally developed in **phases**:
 
 - shadcn/ui components
 - Tailwind for layout and spacing
-- Clean, readable layouts
+- Dark mode support
 - Minimal animations
-- No design system overengineering in V1
+- Icons for visual clarity (navbar & task metadata)
 
 ---
 
-## What V1 Explicitly Does NOT Handle
+## What This Project Intentionally Does NOT Handle (Yet)
 
-These are **intentional omissions**, not oversights:
+These omissions are **intentional**, not oversights:
 
-- Overdue / expired task status
-- Automatic status transitions
-- Background jobs / cron tasks
+- Stored overdue / late submission state
+- Background jobs / cron
 - Notifications
-- Audit logs
-- Task comments
-- Assignment automation
-- Dashboard analytics
-
-V1 prioritizes **manual, explicit behavior** over automation.
+- Comment editing
+- Role demotion
+- Realtime updates
+- Analytics dashboards
 
 ---
 
-## V2 Ideas & Notes (Planned)
+## Admin Capabilities
 
-These are intentionally deferred to avoid over-scoping V1.
+- Task creation
+- Task management across users
+- Comment moderation
+- **Admin promotion via email (V2)**
 
-### Task Lifecycle Enhancements
+Admin user management UI is intentionally minimal in V2.
 
-- Derived `overdue` state (computed, not stored)
-- Visual indicators for overdue tasks
-- Optional auto-reminders
+---
 
-### Comments & Collaboration
+## Project Status
 
-- Task comments
-- Activity feed per task
-- Mentions / notifications
+- **V1**: Fundamentals locked
+- **V2**: In progress
 
-### Admin Features
+  - Comments
+  - Computed overdue state
+  - Dark mode
+  - Admin promotion
 
-- Admin assignment UI
-- Bulk task operations
-- Role management improvements
-
-### Automation
-
-- Background jobs (cron / queues)
-- Status reminders
-- Due-date-based notifications
-
-### UI Enhancements
-
-- Dashboard overview
-- Filters and sorting
-- Better loading states
-- Improved navigation
-- Accessibility polish
+V2 will be frozen once collaboration and admin flows are stable.
 
 ---
 
 ## Why This Project Exists
 
-This project is not a showcase of every possible feature.
+This is not a feature-maximized demo.
 
 It exists to demonstrate:
 
-- Clean server-first architecture
+- Server-first architecture
+- Correct permission boundaries
 - Realistic form handling
-- Proper validation boundaries
 - Thoughtful scoping
-- Ability to grow without refactoring fundamentals
-
----
-
-## Status
-
-**V1: In Progress**  
-Currently focused on finishing core flows and freezing behavior before adding complexity.
+- Ability to extend features without refactoring fundamentals

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import CreateCommentForm from "../_components/CreateCommentForm";
 import CommentList from "../_components/CommentList";
+import { Calendar } from "lucide-react";
 
 export default async function TaskView({
   params,
@@ -69,7 +70,10 @@ export default async function TaskView({
           Created by: {task.createdBy.email}
         </p>
         <div className="flex justify-between items-center">
-          <h4>Due: {task.dueDate ? task.dueDate.toLocaleDateString() : "-"}</h4>
+          <h4 className="flex gap-2">
+            <Calendar /> Due:{" "}
+            {task.dueDate ? task.dueDate.toLocaleDateString() : "-"}
+          </h4>
           <div className="flex gap-2">
             <Link href={`/tasks/${taskId}/edit`}>
               <Button className="bg-amber-500 hover:bg-amber-600">Edit</Button>
