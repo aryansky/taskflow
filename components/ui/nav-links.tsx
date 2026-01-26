@@ -13,7 +13,10 @@ export default function NavLinks({ isAdmin }: { isAdmin: boolean }) {
     { href: "/tasks", label: "Tasks" },
   ];
 
-  const adminLinks = [{ href: "/admin/new-task", label: "Create Task" }];
+  const adminLinks = [
+    { href: "/admin/new-task", label: "Create Task" },
+    { href: "/admin/promote", label: "Promote" },
+  ];
 
   const allLinks = isAdmin ? [...links, ...adminLinks] : links;
 
