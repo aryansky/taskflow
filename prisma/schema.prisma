@@ -11,6 +11,8 @@ model User {
   id            String    @id @default(cuid())
   email         String    @unique
   name          String?
+  imageUrl      String?
+  isActive      Boolean   @default(true)
   role          Role      @default(USER)
   createdTasks  Task[]    @relation("createdTasks")
   assignedTasks Task[]    @relation("assignedTasks")
