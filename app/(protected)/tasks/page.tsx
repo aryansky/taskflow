@@ -1,7 +1,9 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import TaskCard from "./_components/TaskCard";
+import { Input } from "@/components/ui/input";
 import Link from "next/link";
+import TaskCardSkeleton from "./_components/TaskCardSkeleton";
 
 export default async function AllTaskView() {
   const session = await auth();
@@ -32,19 +34,21 @@ export default async function AllTaskView() {
   }
 
   return (
-    <div className="flex gap-4 m-10 flex-wrap justify-evenly">
-      {tasks.map((task) => {
-        return (
-          <Link key={task.id} href={`/tasks/${task.id}`}>
-            <TaskCard
-              {...task}
-              taskId={task.id}
-              assignedToEmail={task.assignedTo.email}
-              createdByEmail={task.createdBy.email}
-            />
-          </Link>
-        );
-      })}
+    <div className="max-w-3xl lg:max-w-5xl mx-auto p-6">
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {tasks.map((task) => {
+          return (
+            <Link href={`/tasks/${task.id}`} key={task.id}>
+              <TaskCard
+                {...task}
+                taskId={task.id}
+                assignedToEmail={task.assignedTo.email}
+                createdByEmail={task.createdBy.email}
+              />
+            </Link>
+          );
+        })}
+      </section>
     </div>
   );
 }
