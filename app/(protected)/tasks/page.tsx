@@ -28,7 +28,11 @@ export default async function AllTaskView() {
         });
 
   if (tasks.length === 0) {
-    return <div>No tasks</div>;
+    return (
+      <div className="prose dark:prose-invert flex justify-center mt-8">
+        <h2>No tasks</h2>
+      </div>
+    );
   }
 
   return (

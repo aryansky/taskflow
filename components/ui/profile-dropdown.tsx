@@ -16,15 +16,18 @@ import { LogoutMenuItem } from "./logout-menu-item";
 
 export async function ProfileDropdown() {
   const session = await auth();
-  console.log("From profile dropdown: ", session?.user);
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="rounded-full">
           <Avatar>
-            <AvatarImage src={session!.user.imageUrl} alt="shadcn" />
-            <AvatarFallback>
+            <AvatarImage
+              key={session!.user.imageUrl ?? undefined}
+              src={session!.user.imageUrl ?? undefined}
+              alt={session!.user.name ?? "User avatar"}
+            />
+            <AvatarFallback delayMs={3000}>
               <UserRound />
             </AvatarFallback>
           </Avatar>

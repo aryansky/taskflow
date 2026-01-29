@@ -26,8 +26,8 @@ export default async function EditTask({
   });
   if (!task) {
     return (
-      <div className="prose flex justify-center mt-8">
-        <h1>No task found.</h1>
+      <div className="prose dark:prose-invert flex justify-center mt-8">
+        <h2>No task found.</h2>
       </div>
     );
   }

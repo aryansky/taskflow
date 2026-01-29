@@ -17,6 +17,7 @@ export default async function Profile() {
             alt="User profile picture"
             width={200}
             height={200}
+            priority
           />
         ) : (
           <div className="flex h-[200px] w-[200px] items-center justify-center rounded-full bg-muted">

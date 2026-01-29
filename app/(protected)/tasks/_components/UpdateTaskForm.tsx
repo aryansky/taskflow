@@ -59,7 +59,7 @@ export default function UpdateTaskForm({
       title: title,
       description: description,
       assignedToEmail: assignedToEmail,
-      dueDate: dueDate,
+      dueDate: dueDate ?? undefined,
     },
   });
   const router = useRouter();
@@ -212,16 +212,17 @@ export default function UpdateTaskForm({
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      type="button"
-                      className="bg-red-700 hover:bg-red-800"
-                      onClick={() => {
-                        deleteTask(taskId);
-                      }}
-                    >
-                      <Trash />
-                      Delete
-                    </AlertDialogAction>
+                    <Button variant={"destructive"} asChild>
+                      <AlertDialogAction
+                        type="button"
+                        onClick={() => {
+                          deleteTask(taskId);
+                        }}
+                      >
+                        <Trash />
+                        Delete
+                      </AlertDialogAction>
+                    </Button>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>

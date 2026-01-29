@@ -61,6 +61,7 @@ export const authOptions = {
         session.user.role = token.role as string;
         session.user.imageUrl = token.imageUrl as string;
         session.user.name = token.name as string;
+        session.user.image = token.imageUrl as string;
       }
       return session;
     },
