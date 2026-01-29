@@ -46,8 +46,8 @@ export default function AdminPromoteForm() {
   }
 
   return (
-    <form className="mt-64" onSubmit={handleSubmit(onSubmit)}>
-      <FieldGroup className="max-w-xl mx-auto">
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <FieldGroup>
         <Field>
           <FieldLabel htmlFor="email">Email</FieldLabel>
           <ButtonGroup>

@@ -85,7 +85,7 @@ export default function UpdateTaskForm({
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <FieldGroup className="max-w-xl mx-auto">
+        <FieldGroup>
           <Field>
             <FieldLabel htmlFor="title">Title</FieldLabel>
             <Input

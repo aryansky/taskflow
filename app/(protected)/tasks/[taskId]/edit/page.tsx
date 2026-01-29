@@ -41,8 +41,8 @@ export default async function EditTask({
   }
 
   return (
-    <div>
-      <h1 className="text-4xl tracking-tight font-bold text-center m-4">
+    <div className="max-w-xl mx-auto p-6">
+      <h1 className="text-4xl tracking-tight font-bold text-center mb-4">
         Edit Task
       </h1>
       <UpdateTaskForm

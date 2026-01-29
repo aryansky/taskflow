@@ -27,7 +27,7 @@ export async function ProfileDropdown() {
               src={session!.user.imageUrl ?? undefined}
               alt={session!.user.name ?? "User avatar"}
             />
-            <AvatarFallback delayMs={3000}>
+            <AvatarFallback>
               <UserRound />
             </AvatarFallback>
           </Avatar>
