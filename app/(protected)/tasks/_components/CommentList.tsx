@@ -22,7 +22,7 @@ export default async function CommentList({ taskId }: { taskId: string }) {
   }
 
   return (
-    <div>
+    <div className="grid grid-cols-1 gap-4 my-6">
       {comments.map((comment) => {
         return (
           <Comment

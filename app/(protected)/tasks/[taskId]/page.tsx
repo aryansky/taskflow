@@ -8,6 +8,8 @@ import Link from "next/link";
 import CreateCommentForm from "../_components/CreateCommentForm";
 import CommentList from "../_components/CommentList";
 import { Calendar } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import CommentSkeleton from "../_components/CommentSkeleton";
 
 export default async function TaskView({
   params,
@@ -49,13 +51,13 @@ export default async function TaskView({
   }
 
   return (
-    <div className="flex flex-col items-center w-full">
-      <article className="prose dark:prose-invert mt-8">
-        <div className="flex justify-between items-center">
-          <h1 className="flex justify-between items-center mb-0 w-xl">
+    <div className="max-w-5xl mx-auto p-6">
+      <article className="prose dark:prose-invert mx-auto">
+        <div className="flex justify-between items-center w-full">
+          <h1 className="flex justify-between items-center mb-0">
             {task.title}
           </h1>
-          <div className="w-20">
+          <div className="">
             <TaskStatus
               status={task.status}
               isOverdue={isOverdue ?? undefined}
@@ -82,16 +84,16 @@ export default async function TaskView({
           </div>
         </div>
       </article>
-      <hr className="w-full mt-8" />
-      <div className="w-xl prose dark:prose-invert m-4">
-        <h2 className="">Comments</h2>
-      </div>
-      <div className="w-xl">
-        <CreateCommentForm taskId={task.id} />
-      </div>
-      <div className="w-xl">
-        <CommentList taskId={task.id} />
-      </div>
+      <hr className="w-full border mt-8" />
+      <section className="max-w-2xl mx-auto">
+        <h2 className="text-2xl font-semibold my-6">Comments</h2>
+        <div>
+          <CreateCommentForm taskId={task.id} />
+        </div>
+        <div>
+          <CommentList taskId={task.id} />
+        </div>
+      </section>
     </div>
   );
 }

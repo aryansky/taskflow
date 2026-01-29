@@ -1,9 +1,7 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import TaskCard from "./_components/TaskCard";
-import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import TaskCardSkeleton from "./_components/TaskCardSkeleton";
 
 export default async function AllTaskView() {
   const session = await auth();

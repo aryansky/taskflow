@@ -16,6 +16,7 @@ import { LogoutMenuItem } from "./logout-menu-item";
 
 export async function ProfileDropdown() {
   const session = await auth();
+  console.log("From profile dropdown: ", session?.user);
 
   return (
     <DropdownMenu>
