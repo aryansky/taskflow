@@ -17,21 +17,6 @@ const prisma = new PrismaClient({
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 async function main() {
-  // clear db
-  await prisma.comment.deleteMany();
-  await prisma.task.deleteMany();
-
-  //create admin
-  await prisma.user.upsert({
-    where: { email: "admin@test.com" },
-    update: {},
-    create: {
-      name: "Admin",
-      email: "admin@test.com",
-      role: "ADMIN",
-    },
-  });
-
   // Create users
   await prisma.user.createMany({
     data: seedEmails.map((email) => {
