@@ -26,7 +26,7 @@ export default function WorkspaceCard({
       <CardHeader>
         <CardTitle>{name}</CardTitle>
         <CardAction>
-          <Button asChild variant="ghost">
+          <Button asChild variant="secondary">
             <Link href={`/workspaces/${workspaceId}`}>View</Link>
           </Button>
         </CardAction>
