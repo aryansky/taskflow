@@ -25,7 +25,6 @@ export const authOptions = {
           data: {
             email: user.email!,
             name: user.name,
-            role: user.email === process.env.ADMIN_EMAIL ? "ADMIN" : "USER",
             imageUrl: user.image,
           },
         });
@@ -39,7 +38,6 @@ export const authOptions = {
           select: {
             id: true,
             email: true,
-            role: true,
             imageUrl: true,
           },
         });
@@ -47,7 +45,6 @@ export const authOptions = {
         if (dbUser) {
           token.id = dbUser.id;
           token.email = dbUser.email;
-          token.role = dbUser.role;
           token.imageUrl = dbUser.imageUrl;
         }
       }
@@ -58,7 +55,6 @@ export const authOptions = {
       if (session.user) {
         session.user.id = token.id as string;
         session.user.email = token.email as string;
-        session.user.role = token.role as string;
         session.user.imageUrl = token.imageUrl as string;
         session.user.name = token.name as string;
         session.user.image = token.imageUrl as string;
