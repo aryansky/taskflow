@@ -1,32 +1,30 @@
-import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { notFound, redirect } from "next/navigation";
+import { forbidden, notFound } from "next/navigation";
 import UpdateTaskForm from "../../_components/UpdateTaskForm";
+import { requireWorkspaceMember } from "@/lib/guards/requireWorkspaceMember";
 
 export default async function EditTask({
   params,
 }: {
   params: Promise<{ taskId: string }>;
 }) {
-  const session = await auth();
   const { taskId } = await params;
-
   const task = await prisma.task.findUnique({
     where: { id: taskId },
     include: {
-      assignedTo: { select: { id: true, name: true, email: true } },
-      createdBy: { select: { id: true, name: true, email: true } },
+      assignedTo: { select: { email: true } },
     },
   });
   if (!task) notFound();
 
-  if (
-    session!.user.role !== "ADMIN" &&
-    session!.user.id !== task.assignedToId &&
-    session!.user.id !== task.createdById
-  ) {
-    redirect("/forbidden");
-  }
+  const membership = await requireWorkspaceMember(task.workspaceId);
+
+  const canEditTask =
+    membership.role === "OWNER" ||
+    membership.role === "ADMIN" ||
+    membership.userId === task.createdById;
+
+  if (!canEditTask) forbidden();
 
   return (
     <div className="max-w-xl mx-auto p-6">

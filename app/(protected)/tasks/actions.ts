@@ -1,59 +1,51 @@
 "use server";
 
-import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { Status } from "@/lib/generated/prisma/client";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import z from "zod";
 import { updateTaskSchema } from "./schema";
 import { TaskState } from "./types";
+import { requireWorkspaceMember } from "@/lib/guards/requireWorkspaceMember";
+import { forbidden } from "next/navigation";
 
 export async function updateTaskStatus(taskId: string, newStatus: Status) {
-  const session = await auth();
-  const userId = session!.user.id;
+  const task = await prisma.task.findUnique({ where: { id: taskId } });
+  if (!task) throw new Error("TASK_NOT_FOUND");
 
-  const task = await prisma.task.findUnique({
-    where: { id: taskId },
-  });
+  const membership = await requireWorkspaceMember(task.workspaceId);
 
-  if (!task) {
-    throw new Error("TASK_NOT_FOUND");
-  }
+  const canUpdateStatus =
+    membership.role === "OWNER" ||
+    membership.role === "ADMIN" ||
+    membership.userId === task.assignedToId;
 
-  if (
-    session!.user.role !== "ADMIN" &&
-    task.assignedToId !== userId &&
-    task.createdById !== userId
-  ) {
-    throw new Error("FORBIDDEN");
-  }
+  if (!canUpdateStatus) forbidden();
 
   await prisma.task.update({
     where: { id: taskId },
     data: { status: newStatus },
   });
 
-  revalidatePath("/tasks");
+  revalidatePath(`/workspaces/${task.workspaceId}`);
   revalidatePath(`/tasks/${taskId}`);
 }
 
 export async function updateTask(
   taskId: string,
-  data: z.infer<typeof updateTaskSchema>
+  data: z.infer<typeof updateTaskSchema>,
 ): Promise<TaskState> {
-  const session = await auth();
-  const userId = session!.user.id;
   const task = await prisma.task.findUnique({ where: { id: taskId } });
   if (!task) throw new Error("TASK_NOT_FOUND");
 
-  if (
-    session!.user.role !== "ADMIN" &&
-    userId !== task.assignedToId &&
-    userId !== task.createdById
-  ) {
-    throw new Error("FORBIDDEN");
-  }
+  const membership = await requireWorkspaceMember(task.workspaceId);
+
+  const canEditTask =
+    membership.role === "OWNER" ||
+    membership.role === "ADMIN" ||
+    membership.userId === task.createdById;
+
+  if (!canEditTask) forbidden();
 
   const parsed = updateTaskSchema.safeParse(data);
   if (!parsed.success) {
@@ -79,22 +71,28 @@ export async function updateTask(
 }
 
 export async function deleteTask(taskId: string) {
-  const session = await auth();
-  const userId = session!.user.id;
-  const task = await prisma.task.findUnique({ where: { id: taskId } });
+  const task = await prisma.task.findUnique({
+    where: { id: taskId },
+    select: { workspaceId: true, assignedToId: true, createdById: true },
+  });
   if (!task) throw new Error("TASK_NOT_FOUND");
 
-  if (
-    session!.user.role !== "ADMIN" &&
-    userId !== task.assignedToId &&
-    userId !== task.createdById
-  ) {
-    throw new Error("FORBIDDEN");
-  }
+  const membership = await requireWorkspaceMember(task.workspaceId);
+
+  const canDeleteTask =
+    membership.role === "OWNER" ||
+    membership.role === "ADMIN" ||
+    membership.userId === task.createdById;
+
+  if (!canDeleteTask) forbidden();
 
   await prisma.task.delete({
     where: { id: taskId },
   });
 
-  redirect("/tasks");
+  return {
+    success: {
+      redirectPath: `/workspaces/${task.workspaceId}`,
+    },
+  };
 }

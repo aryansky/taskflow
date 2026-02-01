@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { forbidden, notFound } from "next/navigation";
+import { notFound } from "next/navigation";
 import TaskActions from "../_components/TaskActions";
 import TaskStatus from "../_components/TaskStatus";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,6 @@ import CreateCommentForm from "../_components/CreateCommentForm";
 import CommentList from "../_components/CommentList";
 import { Calendar } from "lucide-react";
 import { requireWorkspaceMember } from "@/lib/guards/requireWorkspaceMember";
-import { requireTaskAccess } from "@/lib/guards/requireTaskAccess";
 
 export default async function TaskView({
   params,
@@ -26,15 +25,19 @@ export default async function TaskView({
   });
   if (!task) notFound();
 
+  const membership = await requireWorkspaceMember(task.workspaceId);
+
   const isOverdue = task.dueDate && new Date() > task.dueDate;
 
-  const membership = await requireWorkspaceMember(task.workspaceId);
-  requireTaskAccess({
-    userId: membership.userId,
-    membershipRole: membership.role,
-    assignedToId: task.assignedToId,
-    createdById: task.createdById,
-  });
+  const canEditTask =
+    membership.role === "OWNER" ||
+    membership.role === "ADMIN" ||
+    membership.userId === task.createdById;
+
+  const canUpdateStatus =
+    membership.role === "OWNER" ||
+    membership.role === "ADMIN" ||
+    membership.userId === task.assignedToId;
 
   return (
     <div className="max-w-5xl mx-auto p-6">
@@ -63,10 +66,16 @@ export default async function TaskView({
             {task.dueDate ? task.dueDate.toLocaleDateString() : "-"}
           </h4>
           <div className="flex gap-2 not-prose">
-            <Link href={`/tasks/${taskId}/edit`}>
-              <Button className="bg-amber-500 hover:bg-amber-600">Edit</Button>
-            </Link>
-            <TaskActions taskId={taskId} status={task.status} />
+            {canEditTask && (
+              <Link href={`/tasks/${taskId}/edit`}>
+                <Button className="bg-amber-500 hover:bg-amber-600">
+                  Edit
+                </Button>
+              </Link>
+            )}
+            {canUpdateStatus && (
+              <TaskActions taskId={taskId} status={task.status} />
+            )}
           </div>
         </div>
       </article>
