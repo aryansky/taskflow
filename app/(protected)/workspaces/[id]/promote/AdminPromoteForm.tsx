@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import {
   Field,
+  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -14,7 +15,11 @@ import { promoteToAdminSchema } from "./schema";
 import { toast } from "sonner";
 import { ButtonGroup } from "@/components/ui/button-group";
 
-export default function AdminPromoteForm() {
+export default function AdminPromoteForm({
+  workspaceId,
+}: {
+  workspaceId: string;
+}) {
   const {
     register,
     handleSubmit,
@@ -24,7 +29,7 @@ export default function AdminPromoteForm() {
   } = useForm<z.infer<typeof promoteToAdminSchema>>();
 
   async function onSubmit(data: z.infer<typeof promoteToAdminSchema>) {
-    const response = await promoteToAdmin(data);
+    const response = await promoteToAdmin(data, workspaceId);
 
     if (response.errors) {
       Object.entries(response.errors).forEach(([field, messages]) => {
@@ -66,6 +71,9 @@ export default function AdminPromoteForm() {
               Promote
             </Button>
           </ButtonGroup>
+          <FieldDescription>
+            Enter the email of the user that is to be promoted to admin.
+          </FieldDescription>
 
           {errors.userEmail && (
             <FieldError errors={[{ message: errors.userEmail.message }]} />

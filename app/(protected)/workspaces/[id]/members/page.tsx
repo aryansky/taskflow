@@ -66,9 +66,15 @@ export default async function Members({
         <div className="prose dark:prose-invert my-4">
           <h2>Members</h2>
         </div>
-        {members.map((member) => {
-          return <MemberCard key={member.id} member={member} />;
-        })}
+        {members.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            No members found for this workspace
+          </p>
+        ) : (
+          members.map((member) => {
+            return <MemberCard key={member.id} member={member} />;
+          })
+        )}
       </section>
     </div>
   );
