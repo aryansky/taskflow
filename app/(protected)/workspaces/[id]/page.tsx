@@ -2,8 +2,9 @@ import PageTitle from "@/components/ui/page-title";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
-import { forbidden, notFound, redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import TaskCard from "../../tasks/_components/TaskCard";
+import { requireWorkspaceMember } from "@/lib/guards/requireWorkspaceMember";
 
 export default async function Workspace({
   params,
@@ -16,41 +17,22 @@ export default async function Workspace({
   const { id } = await params;
 
   const workspace = await prisma.workspace.findUnique({
-    where: {
-      id: id,
-    },
-    select: {
-      id: true,
-      name: true,
-    },
-  });
-
-  if (!workspace) notFound();
-
-  const membership = await prisma.workspaceMember.findUnique({
-    where: {
-      userId_workspaceId: {
-        userId: session.user.id,
-        workspaceId: workspace.id,
-      },
-    },
+    where: { id },
     include: {
-      workspace: {
+      tasks: {
         include: {
-          tasks: {
-            include: {
-              assignedTo: { select: { email: true } },
-              createdBy: { select: { email: true } },
-            },
-          },
+          assignedTo: { select: { email: true } },
+          createdBy: { select: { email: true } },
         },
       },
     },
   });
 
-  if (!membership) forbidden();
+  if (!workspace) notFound();
 
-  if (membership.workspace.tasks.length === 0) {
+  await requireWorkspaceMember(workspace.id);
+
+  if (workspace.tasks.length === 0) {
     return (
       <div className="max-w-3xl lg:max-w-5xl mx-auto p-6">
         <PageTitle>{workspace.name}</PageTitle>
@@ -65,7 +47,7 @@ export default async function Workspace({
       <PageTitle>{workspace.name}</PageTitle>
       <hr />
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 my-6">
-        {membership.workspace.tasks.map((task) => {
+        {workspace.tasks.map((task) => {
           return (
             <Link href={`/tasks/${task.id}`} key={task.id}>
               <TaskCard
