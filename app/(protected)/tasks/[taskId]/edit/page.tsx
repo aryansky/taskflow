@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import UpdateTaskForm from "../../_components/UpdateTaskForm";
 
 export default async function EditTask({
@@ -12,25 +12,13 @@ export default async function EditTask({
   const { taskId } = await params;
 
   const task = await prisma.task.findUnique({
-    where: {
-      id: taskId,
-    },
+    where: { id: taskId },
     include: {
-      assignedTo: {
-        select: { id: true, name: true, email: true },
-      },
-      createdBy: {
-        select: { id: true, name: true, email: true },
-      },
+      assignedTo: { select: { id: true, name: true, email: true } },
+      createdBy: { select: { id: true, name: true, email: true } },
     },
   });
-  if (!task) {
-    return (
-      <div className="prose dark:prose-invert flex justify-center mt-8">
-        <h2>No task found.</h2>
-      </div>
-    );
-  }
+  if (!task) notFound();
 
   if (
     session!.user.role !== "ADMIN" &&

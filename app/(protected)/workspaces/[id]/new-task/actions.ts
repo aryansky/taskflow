@@ -1,21 +1,20 @@
 "use server";
 
-import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { redirect } from "next/navigation";
+import { forbidden } from "next/navigation";
 import { z } from "zod";
 import { TaskState } from "@/app/(protected)/tasks/types";
 import { createTaskSchema } from "@/app/(protected)/tasks/schema";
+import { requireWorkspaceMember } from "@/lib/guards/requireWorkspaceMember";
 
 export async function createTask(
-  data: z.infer<typeof createTaskSchema>
+  data: z.infer<typeof createTaskSchema>,
+  workspaceId: string,
 ): Promise<TaskState> {
-  const session = await auth();
-
-  if (!session) redirect("/api/auth/signin");
-  if (session.user.role !== "ADMIN") redirect("/forbidden");
-
   const parsed = createTaskSchema.safeParse(data);
+  const membership = await requireWorkspaceMember(workspaceId);
+  if (membership.role !== "ADMIN" && membership.role !== "OWNER") forbidden();
+
   if (!parsed.success) {
     return { errors: z.flattenError(parsed.error).fieldErrors };
   }
@@ -29,22 +28,23 @@ export async function createTask(
     dueDate.setHours(0, 0, 0, 0);
 
     if (dueDate < tomorrow) {
-      return {
-        errors: {
-          dueDate: ["Due date must be from tomorrow onward"],
-        },
-      };
+      return { errors: { dueDate: ["Due date must be from tomorrow onward"] } };
     }
   }
 
   const assignedToUser = await prisma.user.findUnique({
-    where: { email: parsed.data.assignedToEmail },
+    where: {
+      email: parsed.data.assignedToEmail,
+      memberships: {
+        some: {
+          workspaceId: workspaceId,
+        },
+      },
+    },
   });
   if (!assignedToUser) {
     return {
-      errors: {
-        assignedToEmail: ["User Not Found"],
-      },
+      errors: { assignedToEmail: ["User not found in this workspace"] },
     };
   }
 
@@ -52,17 +52,10 @@ export async function createTask(
     data: {
       title: parsed.data.title,
       description: parsed.data.description,
-      assignedTo: {
-        connect: {
-          id: assignedToUser.id,
-        },
-      },
-      createdBy: {
-        connect: {
-          id: session.user.id,
-        },
-      },
       dueDate: parsed.data.dueDate,
+      assignedTo: { connect: { id: assignedToUser.id } },
+      createdBy: { connect: { id: membership.userId } },
+      workspace: { connect: { id: workspaceId } },
     },
   });
 

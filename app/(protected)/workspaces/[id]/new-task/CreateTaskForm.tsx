@@ -12,7 +12,7 @@ import { InputGroup, InputGroupTextarea } from "@/components/ui/input-group";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 import { useRouter } from "next/navigation";
-import { createTaskSchema } from "../../tasks/schema";
+import { createTaskSchema } from "@/app/(protected)/tasks/schema";
 import { ChevronDownIcon } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
@@ -22,7 +22,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-export default function CreateTaskForm() {
+export default function CreateTaskForm({
+  workspaceId,
+}: {
+  workspaceId: string;
+}) {
   const {
     register,
     handleSubmit,
@@ -33,7 +37,7 @@ export default function CreateTaskForm() {
   const router = useRouter();
 
   async function onSubmit(data: z.infer<typeof createTaskSchema>) {
-    const response = await createTask(data);
+    const response = await createTask(data, workspaceId);
 
     if (response.errors) {
       Object.entries(response.errors).forEach(([field, messages]) => {

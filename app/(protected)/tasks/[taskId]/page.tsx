@@ -1,6 +1,5 @@
-import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { redirect } from "next/navigation";
+import { forbidden, notFound } from "next/navigation";
 import TaskActions from "../_components/TaskActions";
 import TaskStatus from "../_components/TaskStatus";
 import { Button } from "@/components/ui/button";
@@ -8,47 +7,34 @@ import Link from "next/link";
 import CreateCommentForm from "../_components/CreateCommentForm";
 import CommentList from "../_components/CommentList";
 import { Calendar } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
-import CommentSkeleton from "../_components/CommentSkeleton";
+import { requireWorkspaceMember } from "@/lib/guards/requireWorkspaceMember";
+import { requireTaskAccess } from "@/lib/guards/requireTaskAccess";
 
 export default async function TaskView({
   params,
 }: {
   params: Promise<{ taskId: string }>;
 }) {
-  const session = await auth();
   const { taskId } = await params;
-
   const task = await prisma.task.findUnique({
-    where: {
-      id: taskId,
-    },
+    where: { id: taskId },
     include: {
-      assignedTo: {
-        select: { id: true, name: true, email: true },
-      },
-      createdBy: {
-        select: { id: true, name: true, email: true },
-      },
+      assignedTo: { select: { id: true, name: true, email: true } },
+      createdBy: { select: { id: true, name: true, email: true } },
+      workspace: { select: { name: true } },
     },
   });
-  if (!task) {
-    return (
-      <div className="prose dark:prose-invert flex justify-center mt-8">
-        <h2>No task found.</h2>
-      </div>
-    );
-  }
+  if (!task) notFound();
 
   const isOverdue = task.dueDate && new Date() > task.dueDate;
 
-  if (
-    session!.user.role !== "ADMIN" &&
-    session!.user.id !== task.assignedToId &&
-    session!.user.id !== task.createdById
-  ) {
-    redirect("/forbidden");
-  }
+  const membership = await requireWorkspaceMember(task.workspaceId);
+  requireTaskAccess({
+    userId: membership.userId,
+    membershipRole: membership.role,
+    assignedToId: task.assignedToId,
+    createdById: task.createdById,
+  });
 
   return (
     <div className="max-w-5xl mx-auto p-6">
@@ -76,7 +62,7 @@ export default async function TaskView({
             <Calendar /> Due:{" "}
             {task.dueDate ? task.dueDate.toLocaleDateString() : "-"}
           </h4>
-          <div className="flex gap-2">
+          <div className="flex gap-2 not-prose">
             <Link href={`/tasks/${taskId}/edit`}>
               <Button className="bg-amber-500 hover:bg-amber-600">Edit</Button>
             </Link>
