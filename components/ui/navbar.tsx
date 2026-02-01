@@ -16,7 +16,7 @@ export default async function Navbar() {
           TaskFlow
         </h2>
       </div>
-      <NavLinks isAdmin={session?.user.role === "ADMIN"} />
+      <NavLinks />
       <div className="flex items-center gap-2">
         <ThemeToggle />
         {session ? <ProfileDropdown /> : <LoginButton />}
