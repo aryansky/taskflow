@@ -19,6 +19,9 @@ model User {
   createdTasks  Task[] @relation("createdTasks")
   assignedTasks Task[] @relation("assignedTasks")
 
+  sentInvites     WorkspaceInvite[] @relation("sentInvites")
+  receivedInvites WorkspaceInvite[] @relation("receivedInvites")
+
   memberships WorkspaceMember[]
   comments    Comment[]
 }
@@ -29,6 +32,7 @@ model Workspace {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  invites WorkspaceInvite[] @relation("invites")
   members WorkspaceMember[]
   tasks   Task[]
 }
@@ -45,6 +49,26 @@ model WorkspaceMember {
   joinedAt DateTime @default(now())
 
   @@unique([userId, workspaceId])
+}
+
+model WorkspaceInvite {
+  id String @id @default(cuid())
+
+  workspaceId String
+  sentToId    String
+  invitedById String
+
+  status    InviteStatus @default(PENDING)
+  expiresAt DateTime
+
+  createdAt   DateTime  @default(now())
+  respondedAt DateTime?
+
+  workspace Workspace @relation("invites", fields: [workspaceId], references: [id])
+  sentTo    User      @relation("receivedInvites", fields: [sentToId], references: [id])
+  invitedBy User      @relation("sentInvites", fields: [invitedById], references: [id])
+
+  @@unique([workspaceId, sentToId])
 }
 
 model Task {
@@ -89,4 +113,10 @@ enum Status {
   TBD
   IN_PROGRESS
   DONE
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
 }
