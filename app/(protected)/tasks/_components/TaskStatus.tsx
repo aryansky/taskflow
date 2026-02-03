@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Status } from "@/lib/generated/prisma/enums";
 import { cva } from "class-variance-authority";
 
-export const statusVariants = cva(
+export const taskStatusVariants = cva(
   "pointer-events-none transition-colors text-white",
   {
     variants: {
@@ -27,7 +27,7 @@ export const statusVariants = cva(
       status: "TBD",
       overdue: false,
     },
-  }
+  },
 );
 
 const statusTextMap: Record<Status, string> = {
@@ -46,7 +46,7 @@ export default function TaskStatus({
   return (
     <Badge
       variant={"default"}
-      className={statusVariants({ status, overdue: isOverdue })}
+      className={taskStatusVariants({ status, overdue: isOverdue })}
     >
       {isOverdue && status !== "DONE" ? "OVERDUE" : statusTextMap[status]}
     </Badge>

@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import z from "zod";
-import { promoteToAdminSchema } from "./schema";
+import { promoteToAdminSchema } from "../../schema";
 import { requireWorkspaceMember } from "@/lib/guards/requireWorkspaceMember";
 
 interface PromoteToAdminResult {

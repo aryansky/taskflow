@@ -67,8 +67,6 @@ model WorkspaceInvite {
   workspace Workspace @relation("invites", fields: [workspaceId], references: [id])
   sentTo    User      @relation("receivedInvites", fields: [sentToId], references: [id])
   invitedBy User      @relation("sentInvites", fields: [invitedById], references: [id])
-
-  @@unique([workspaceId, sentToId])
 }
 
 model Task {

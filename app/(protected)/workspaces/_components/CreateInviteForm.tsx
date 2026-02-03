@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import {
   Field,
+  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -17,15 +18,17 @@ import {
 import { Input } from "@/components/ui/input";
 
 import { useForm } from "react-hook-form";
-import { createWorkspaceSchema } from "../schema";
+import { inviteSchema } from "../schema";
 import z from "zod";
-import { createWorkspace } from "../actions";
 import { useRouter } from "next/navigation";
+import { createInvite } from "../[id]/invites/actions";
 
-export default function CreateWorkspaceForm({
+export default function CreateInviteForm({
   onSuccess,
+  workspaceId,
 }: {
   onSuccess: () => void;
+  workspaceId: string;
 }) {
   const {
     register,
@@ -33,16 +36,16 @@ export default function CreateWorkspaceForm({
     setError,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<z.infer<typeof createWorkspaceSchema>>();
+  } = useForm<z.infer<typeof inviteSchema>>();
 
   const router = useRouter();
 
-  const onSubmit = async (data: z.infer<typeof createWorkspaceSchema>) => {
-    const response = await createWorkspace(data);
+  const onSubmit = async (data: z.infer<typeof inviteSchema>) => {
+    const response = await createInvite(data, workspaceId);
 
     if (response.errors) {
       Object.entries(response.errors).forEach(([field, messages]) => {
-        setError(field as keyof z.infer<typeof createWorkspaceSchema>, {
+        setError(field as keyof z.infer<typeof inviteSchema>, {
           type: "server",
           message: messages[0],
         });
@@ -58,17 +61,20 @@ export default function CreateWorkspaceForm({
   };
 
   return (
-    <DialogContent className="sm:max-w-sm">
+    <DialogContent className="sm:max-w-md">
       <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
         <DialogHeader>
-          <DialogTitle>Create Workspace</DialogTitle>
+          <DialogTitle>Invite People</DialogTitle>
         </DialogHeader>
         <FieldGroup>
           <Field>
-            <FieldLabel htmlFor="name">Name</FieldLabel>
-            <Input id="name" {...register("name")} />
-            {errors.name && (
-              <FieldError errors={[{ message: errors.name.message }]} />
+            <FieldLabel htmlFor="email">Email</FieldLabel>
+            <Input id="email" {...register("email")} />
+            <FieldDescription>
+              Invite a user by entering their email
+            </FieldDescription>
+            {errors.email && (
+              <FieldError errors={[{ message: errors.email.message }]} />
             )}
           </Field>
         </FieldGroup>
@@ -79,7 +85,7 @@ export default function CreateWorkspaceForm({
             </Button>
           </DialogClose>
           <Button disabled={isSubmitting} type="submit">
-            Create
+            Invite
           </Button>
         </DialogFooter>
       </form>

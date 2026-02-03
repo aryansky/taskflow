@@ -15,7 +15,7 @@ interface CreateCommentResult {
 
 export async function createComment(
   taskId: string,
-  data: z.infer<typeof commentSchema>
+  data: z.infer<typeof commentSchema>,
 ): Promise<CreateCommentResult> {
   const session = await auth();
   const userId = session!.user.id;
