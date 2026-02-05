@@ -21,12 +21,43 @@ export default async function Invites({
     orderBy: { createdAt: "desc" },
   });
 
+  const activeInvites = workspaceInvites.filter(
+    (i) => i.status === "PENDING" && i.expiresAt > new Date(),
+  );
+  const inviteHistory = workspaceInvites.filter(
+    (i) => i.status !== "PENDING" || i.expiresAt < new Date(),
+  );
+
   return (
-    <section className="mx-w-xl my-6">
-      {workspaceInvites.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No invites</p>
+    <section className="max-w-xl my-6">
+      <div className="prose dark:prose-invert my-4">
+        <h2>Active Invites</h2>
+      </div>
+      {activeInvites.length === 0 ? (
+        <p className="text-sm text-muted-foreground">No active invites</p>
       ) : (
-        workspaceInvites.map((invite) => {
+        activeInvites.map((invite) => {
+          return (
+            <InviteCard
+              imageUrl={invite.sentTo.imageUrl}
+              key={invite.id}
+              email={invite.sentTo.email}
+              createdAt={invite.createdAt}
+              status={invite.status}
+              expiresAt={invite.expiresAt}
+              respondedAt={invite.respondedAt ?? undefined}
+            />
+          );
+        })
+      )}
+      <hr className="my-4" />
+      <div className="prose dark:prose-invert my-4">
+        <h2>Invite History</h2>
+      </div>
+      {inviteHistory.length === 0 ? (
+        <p className="text-sm text-muted-foreground">No other invites</p>
+      ) : (
+        inviteHistory.map((invite) => {
           return (
             <InviteCard
               imageUrl={invite.sentTo.imageUrl}

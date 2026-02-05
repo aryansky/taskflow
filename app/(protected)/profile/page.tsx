@@ -20,14 +20,13 @@ export default async function Profile() {
             priority
           />
         ) : (
-          <div className="flex h-[200px] w-[200px] items-center justify-center rounded-full bg-muted">
+          <div className="flex h-48 w-48 items-center justify-center rounded-full bg-muted">
             <UserRound className="h-24 w-24 text-muted-foreground" />
           </div>
         )}
 
         <h2 className="mb-0">{user.name}</h2>
         <h3>{user.email}</h3>
-        <p className="lead">Role: {user.role}</p>
       </div>
     </article>
   );

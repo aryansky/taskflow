@@ -20,11 +20,11 @@ export const inviteStatusVariants = cva(
     variants: {
       status: {
         PENDING: "bg-amber-500 dark:bg-amber-600",
-        ACCEPTED: "bg-green-600",
+        ACCEPTED: "bg-emerald-500 dark:bg-emerald-600",
         REJECTED: "bg-red-800 dark:bg-red-900",
       },
       expired: {
-        true: "bg-slate-600",
+        true: "bg-slate-400 dark:bg-slate-600",
         false: "",
       },
     },

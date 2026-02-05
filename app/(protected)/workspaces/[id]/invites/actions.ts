@@ -54,7 +54,7 @@ export async function createInvite(
   }
 
   const expiresAt = new Date();
-  expiresAt.setHours(0, 0, 0, 0);
+  expiresAt.setHours(23, 59, 59, 0);
   expiresAt.setDate(expiresAt.getDate() + 7);
 
   await prisma.workspaceInvite.create({
