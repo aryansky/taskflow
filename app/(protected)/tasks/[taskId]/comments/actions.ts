@@ -1,10 +1,10 @@
 "use server";
 
-import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import z from "zod";
 import { commentSchema } from "../../schema";
+import { requireWorkspaceMember } from "@/lib/guards/requireWorkspaceMember";
 
 interface CreateCommentResult {
   errors?: {
@@ -17,30 +17,21 @@ export async function createComment(
   taskId: string,
   data: z.infer<typeof commentSchema>,
 ): Promise<CreateCommentResult> {
-  const session = await auth();
-  const userId = session!.user.id;
-
-  const parsed = commentSchema.safeParse(data);
-
-  if (!parsed.success) {
-    return {
-      errors: z.flattenError(parsed.error).fieldErrors,
-    };
-  }
-
   const task = await prisma.task.findUnique({
     where: {
       id: taskId,
     },
   });
   if (!task) throw new Error("TASK_NOT_FOUND");
+  const membership = await requireWorkspaceMember(task.workspaceId);
 
-  const canComment =
-    session!.user.role === "ADMIN" ||
-    userId === task.assignedToId ||
-    userId === task.createdById;
+  const parsed = commentSchema.safeParse(data);
+  if (!parsed.success) {
+    return {
+      errors: z.flattenError(parsed.error).fieldErrors,
+    };
+  }
 
-  if (!canComment) throw new Error("FORBIDDEN");
   await prisma.comment.create({
     data: {
       text: parsed.data.text,
@@ -51,7 +42,7 @@ export async function createComment(
       },
       user: {
         connect: {
-          id: userId,
+          id: membership.userId,
         },
       },
     },
@@ -64,16 +55,24 @@ export async function createComment(
 }
 
 export async function deleteComment(commentId: string) {
-  const session = await auth();
   const comment = await prisma.comment.findUnique({
     where: {
       id: commentId,
     },
+    include: {
+      task: { select: { workspaceId: true, id: true } },
+    },
   });
-
   if (!comment) throw new Error("NO_COMMENT_FOUND");
 
-  if (comment.userId !== session!.user.id && session!.user.role !== "ADMIN") {
+  const membership = await requireWorkspaceMember(comment.task.workspaceId);
+
+  const canDeleteComment =
+    comment.userId === membership.userId ||
+    membership.role === "ADMIN" ||
+    membership.role === "OWNER";
+
+  if (!canDeleteComment) {
     throw new Error("FORBIDDEN");
   }
 
@@ -83,5 +82,5 @@ export async function deleteComment(commentId: string) {
     },
   });
 
-  revalidatePath(`/tasks/${comment.taskId}`);
+  revalidatePath(`/tasks/${comment.task.id}`);
 }

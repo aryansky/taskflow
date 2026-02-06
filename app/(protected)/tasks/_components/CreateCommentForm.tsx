@@ -56,7 +56,7 @@ export default function CreateCommentForm({ taskId }: { taskId: string }) {
           <div className="flex justify-end">
             <Button
               variant="default"
-              size="sm"
+              size="lg"
               disabled={isSubmitting}
               type="submit"
             >

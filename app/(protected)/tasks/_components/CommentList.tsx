@@ -1,9 +1,15 @@
 import prisma from "@/lib/prisma";
 import Comment from "./Comment";
-import { auth } from "@/lib/auth";
+import { notFound } from "next/navigation";
+import { requireWorkspaceMember } from "@/lib/guards/requireWorkspaceMember";
 
 export default async function CommentList({ taskId }: { taskId: string }) {
-  const session = await auth();
+  const task = await prisma.task.findUnique({
+    where: { id: taskId },
+  });
+  if (!task) notFound();
+  const membership = await requireWorkspaceMember(task.workspaceId);
+
   const comments = await prisma.comment.findMany({
     where: {
       taskId: taskId,
@@ -14,6 +20,7 @@ export default async function CommentList({ taskId }: { taskId: string }) {
           email: true,
         },
       },
+      task: { select: { workspaceId: true } },
     },
   });
 
@@ -31,8 +38,9 @@ export default async function CommentList({ taskId }: { taskId: string }) {
             userEmail={comment.user.email}
             commentId={comment.id}
             showCommentActions={
-              comment.userId === session!.user.id ||
-              session!.user.role === "ADMIN"
+              comment.userId === membership.userId ||
+              membership.role === "ADMIN" ||
+              membership.role === "OWNER"
             }
           />
         );
