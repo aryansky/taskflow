@@ -16,5 +16,6 @@ export const promoteToAdminSchema = z.object({
 });
 
 export const createWorkspaceSchema = workspaceSchema;
+export const updateWorkspaceSchema = workspaceSchema;
 export const inviteSchema = emailSchema;
 export const removeMemberSchema = emailSchema;

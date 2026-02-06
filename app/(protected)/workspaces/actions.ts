@@ -3,7 +3,11 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { z } from "zod";
-import { createWorkspaceSchema, removeMemberSchema } from "./schema";
+import {
+  createWorkspaceSchema,
+  removeMemberSchema,
+  updateWorkspaceSchema,
+} from "./schema";
 import { WorkspaceReturnState } from "./types";
 import { requireWorkspaceMember } from "@/lib/guards/requireWorkspaceMember";
 import { revalidatePath } from "next/cache";
@@ -139,6 +143,36 @@ export async function removeMember(
   });
 
   revalidatePath(`/workspaces/${workspaceId}/members`);
+
+  return {
+    success: true,
+  };
+}
+
+export async function updateWorkspace(
+  data: z.infer<typeof updateWorkspaceSchema>,
+  workspaceId: string,
+) {
+  const membership = await requireWorkspaceMember(workspaceId);
+  if (membership.role !== "OWNER") {
+    forbidden();
+  }
+
+  const parsed = updateWorkspaceSchema.safeParse(data);
+  if (parsed.error) {
+    return {
+      errors: z.flattenError(parsed.error).fieldErrors,
+    };
+  }
+
+  await prisma.workspace.update({
+    where: {
+      id: workspaceId,
+    },
+    data: {
+      name: parsed.data.name,
+    },
+  });
 
   return {
     success: true,

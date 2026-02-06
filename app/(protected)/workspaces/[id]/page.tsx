@@ -5,6 +5,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import TaskCard from "../../tasks/_components/TaskCard";
 import { requireWorkspaceMember } from "@/lib/guards/requireWorkspaceMember";
+import EditWorkspaceDialog from "../_components/EditWorkspaceDialog";
 
 export default async function Workspace({
   params,
@@ -30,7 +31,7 @@ export default async function Workspace({
 
   if (!workspace) notFound();
 
-  await requireWorkspaceMember(workspace.id);
+  const membership = await requireWorkspaceMember(workspace.id);
 
   if (workspace.tasks.length === 0) {
     return (
@@ -44,7 +45,15 @@ export default async function Workspace({
 
   return (
     <div className="max-w-3xl lg:max-w-5xl mx-auto p-6">
-      <PageTitle>{workspace.name}</PageTitle>
+      <PageTitle className="flex gap-4 items-center">
+        {workspace.name}{" "}
+        {membership.role === "OWNER" && (
+          <EditWorkspaceDialog
+            workspaceName={workspace.name}
+            workspaceId={workspace.id}
+          />
+        )}
+      </PageTitle>
       <hr />
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 my-6">
         {workspace.tasks.map((task) => {
