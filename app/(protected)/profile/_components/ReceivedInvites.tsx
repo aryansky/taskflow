@@ -49,7 +49,7 @@ export default async function ReceivedInvites({
       )}
       <hr className="my-4" />
       <div className="prose dark:prose-invert my-6">
-        <h2>Other Invites</h2>
+        <h2>Invite History</h2>
       </div>
       {otherInvites.length === 0 ? (
         <p className="text-sm text-muted-foreground">No other invites</p>

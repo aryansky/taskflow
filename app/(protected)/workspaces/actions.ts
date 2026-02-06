@@ -3,8 +3,11 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { z } from "zod";
-import { createWorkspaceSchema } from "./schema";
+import { createWorkspaceSchema, removeMemberSchema } from "./schema";
 import { WorkspaceReturnState } from "./types";
+import { requireWorkspaceMember } from "@/lib/guards/requireWorkspaceMember";
+import { revalidatePath } from "next/cache";
+import { forbidden, redirect } from "next/navigation";
 
 export async function createWorkspace(
   data: z.infer<typeof createWorkspaceSchema>,
@@ -57,5 +60,87 @@ export async function createWorkspace(
     success: {
       redirectPath: `/workspaces/${workspace.id}`,
     },
+  };
+}
+
+export async function leaveWorkspace(workspaceId: string) {
+  const membership = await requireWorkspaceMember(workspaceId);
+
+  if (membership.role === "OWNER") {
+    forbidden();
+  }
+
+  await prisma.workspaceMember.delete({
+    where: {
+      userId_workspaceId: {
+        workspaceId: membership.workspaceId,
+        userId: membership.userId,
+      },
+    },
+  });
+
+  revalidatePath("/workspaces");
+  revalidatePath(`/workspaces/${workspaceId}`);
+  revalidatePath(`/workspaces/${workspaceId}/members`);
+  redirect("/workspaces");
+}
+
+export async function removeMember(
+  workspaceId: string,
+  data: {
+    email: string;
+  },
+) {
+  const membership = await requireWorkspaceMember(workspaceId);
+  if (membership.role !== "OWNER" && membership.role !== "ADMIN") {
+    return { errors: { email: ["UNAUTHORIZED"] } };
+  }
+
+  const parsed = removeMemberSchema.safeParse(data);
+  if (!parsed.success) {
+    return {
+      errors: z.flattenError(parsed.error).fieldErrors,
+    };
+  }
+
+  const memberToBeRemoved = await prisma.user.findUnique({
+    where: { email: parsed.data.email },
+  });
+  if (!memberToBeRemoved) {
+    return { errors: { email: ["No member found"] } };
+  }
+
+  const membershipToBeRemoved = await prisma.workspaceMember.findUnique({
+    where: {
+      userId_workspaceId: {
+        userId: memberToBeRemoved.id,
+        workspaceId,
+      },
+    },
+  });
+
+  if (!membershipToBeRemoved) {
+    return { errors: { email: ["No member found"] } };
+  }
+  if (membershipToBeRemoved.role === "OWNER") {
+    return { errors: { email: ["Owner cannot be removed"] } };
+  }
+  if (membershipToBeRemoved.role === "ADMIN" && membership.role === "ADMIN") {
+    return { errors: { email: ["You cannot remove an admin"] } };
+  }
+
+  await prisma.workspaceMember.delete({
+    where: {
+      userId_workspaceId: {
+        userId: membershipToBeRemoved.userId,
+        workspaceId: membership.workspaceId,
+      },
+    },
+  });
+
+  revalidatePath(`/workspaces/${workspaceId}/members`);
+
+  return {
+    success: true,
   };
 }

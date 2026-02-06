@@ -7,7 +7,7 @@ const workspaceSchema = z.object({
     .max(32, "Must be less than 32 characters"),
 });
 
-export const inviteSchema = z.object({
+const emailSchema = z.object({
   email: z.email("Enter a valid email address"),
 });
 
@@ -16,3 +16,5 @@ export const promoteToAdminSchema = z.object({
 });
 
 export const createWorkspaceSchema = workspaceSchema;
+export const inviteSchema = emailSchema;
+export const removeMemberSchema = emailSchema;

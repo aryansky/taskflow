@@ -3,6 +3,8 @@ import { requireWorkspaceMember } from "@/lib/guards/requireWorkspaceMember";
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import MemberCard from "../../_components/MemberCard";
+import LeaveWorkspaceDialog from "../../_components/LeaveWorkspaceDialog";
+import RemoveMemberDialog from "../../_components/RemoveMemberDialog";
 
 export default async function Members({
   params,
@@ -23,7 +25,7 @@ export default async function Members({
 
   if (!workspace) notFound();
 
-  await requireWorkspaceMember(workspace.id);
+  const membership = await requireWorkspaceMember(workspace.id);
 
   const allMembers = await prisma.workspaceMember.findMany({
     where: { workspaceId: workspace.id },
@@ -76,6 +78,14 @@ export default async function Members({
           })
         )}
       </section>
+      <footer>
+        {membership.role !== "OWNER" && (
+          <LeaveWorkspaceDialog workspaceId={workspace.id} />
+        )}
+        {(membership.role === "OWNER" || membership.role === "ADMIN") && (
+          <RemoveMemberDialog workspaceId={membership.workspaceId} />
+        )}
+      </footer>
     </div>
   );
 }
