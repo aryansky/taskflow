@@ -1,9 +1,9 @@
 import PageTitle from "@/components/ui/page-title";
-import CreateWorkspaceDialog from "./_components/CreateWorkspaceDialog";
+import CreateWorkspaceDialog from "../_components/CreateWorkspaceDialog";
 import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import WorkspaceCard from "./_components/WorkspaceCard";
+import WorkspaceCard from "../_components/WorkspaceCard";
 
 export default async function AllWorkspaces() {
   const session = await auth();
