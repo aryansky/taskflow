@@ -1,7 +1,7 @@
-import { requireWorkspaceMember } from "@/lib/guards/requireWorkspaceMember";
+import { requireWorkspaceMember } from "@/lib/workspace/guards";
 import CreateTaskForm from "./CreateTaskForm";
-import prisma from "@/lib/prisma";
 import { forbidden, notFound } from "next/navigation";
+import { getWorkspace } from "@/lib/workspace/queries";
 
 export default async function NewTask({
   params,
@@ -9,11 +9,9 @@ export default async function NewTask({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const workspace = await prisma.workspace.findUnique({
-    where: { id },
-    select: { id: true, name: true },
-  });
+  const workspace = await getWorkspace(id);
   if (!workspace) notFound();
+
   const membership = await requireWorkspaceMember(workspace.id);
 
   if (membership.role !== "OWNER" && membership.role !== "ADMIN") forbidden();

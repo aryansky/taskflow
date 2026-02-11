@@ -1,8 +1,9 @@
-import { requireWorkspaceMember } from "@/lib/guards/requireWorkspaceMember";
+import { requireWorkspaceMember } from "@/lib/workspace/guards";
 import AdminPromoteForm from "./AdminPromoteForm";
 import { forbidden, notFound } from "next/navigation";
 import PageTitle from "@/components/ui/page-title";
-import prisma from "@/lib/prisma";
+
+import { getWorkspace } from "@/lib/workspace/queries";
 
 export default async function Promote({
   params,
@@ -10,7 +11,7 @@ export default async function Promote({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const workspace = await prisma.workspace.findUnique({ where: { id } });
+  const workspace = await getWorkspace(id);
   if (!workspace) notFound();
 
   const membership = await requireWorkspaceMember(id);

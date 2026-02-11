@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import z from "zod";
 import { updateTaskSchema } from "./schema";
 import { TaskState } from "./types";
-import { requireWorkspaceMember } from "@/lib/guards/requireWorkspaceMember";
+import { requireWorkspaceMember } from "@/lib/workspace/guards";
 import { forbidden } from "next/navigation";
 
 export async function updateTaskStatus(taskId: string, newStatus: Status) {

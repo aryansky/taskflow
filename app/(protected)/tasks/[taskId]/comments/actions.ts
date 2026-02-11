@@ -4,7 +4,7 @@ import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import z from "zod";
 import { commentSchema } from "../../schema";
-import { requireWorkspaceMember } from "@/lib/guards/requireWorkspaceMember";
+import { requireWorkspaceMember } from "@/lib/workspace/guards";
 
 interface CreateCommentResult {
   errors?: {
@@ -56,9 +56,7 @@ export async function createComment(
 
 export async function deleteComment(commentId: string) {
   const comment = await prisma.comment.findUnique({
-    where: {
-      id: commentId,
-    },
+    where: { id: commentId },
     include: {
       task: { select: { workspaceId: true, id: true } },
     },

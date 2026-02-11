@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import Comment from "./Comment";
 import { notFound } from "next/navigation";
-import { requireWorkspaceMember } from "@/lib/guards/requireWorkspaceMember";
+import { requireWorkspaceMember } from "@/lib/workspace/guards";
 
 export default async function CommentList({ taskId }: { taskId: string }) {
   const task = await prisma.task.findUnique({

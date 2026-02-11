@@ -9,7 +9,7 @@ import {
   updateWorkspaceSchema,
 } from "./schema";
 import { WorkspaceReturnState } from "./types";
-import { requireWorkspaceMember } from "@/lib/guards/requireWorkspaceMember";
+import { requireWorkspaceMember } from "@/lib/workspace/guards";
 import { revalidatePath } from "next/cache";
 import { forbidden, redirect } from "next/navigation";
 

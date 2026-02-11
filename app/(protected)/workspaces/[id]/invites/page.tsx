@@ -1,9 +1,9 @@
 import PageTitle from "@/components/ui/page-title";
-import { requireWorkspaceMember } from "@/lib/guards/requireWorkspaceMember";
-import prisma from "@/lib/prisma";
+import { requireWorkspaceMember } from "@/lib/workspace/guards";
 import { notFound } from "next/navigation";
 import CreateInviteDialog from "../../_components/CreateInviteDialog";
 import Invites from "../../_components/Invites";
+import { getWorkspace } from "@/lib/workspace/queries";
 
 export default async function InvitesPage({
   params,
@@ -11,10 +11,9 @@ export default async function InvitesPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const workspace = await prisma.workspace.findUnique({
-    where: { id },
-  });
+  const workspace = await getWorkspace(id);
   if (!workspace) notFound();
+
   const membership = await requireWorkspaceMember(workspace.id);
 
   const canInvite = membership.role === "OWNER" || membership.role === "ADMIN";

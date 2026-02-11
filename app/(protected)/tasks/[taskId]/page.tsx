@@ -7,7 +7,7 @@ import Link from "next/link";
 import CreateCommentForm from "../_components/CreateCommentForm";
 import CommentList from "../_components/CommentList";
 import { Calendar } from "lucide-react";
-import { requireWorkspaceMember } from "@/lib/guards/requireWorkspaceMember";
+import { requireWorkspaceMember } from "@/lib/workspace/guards";
 
 export default async function TaskView({
   params,

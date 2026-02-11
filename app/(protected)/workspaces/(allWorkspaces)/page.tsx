@@ -1,22 +1,15 @@
 import PageTitle from "@/components/ui/page-title";
 import CreateWorkspaceDialog from "../_components/CreateWorkspaceDialog";
-import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import WorkspaceCard from "../_components/WorkspaceCard";
+import { getUserWorkspaceMemberships } from "@/lib/workspace/queries";
 
 export default async function AllWorkspaces() {
   const session = await auth();
   if (!session) redirect("/api/auth/signin");
 
-  const memberships = await prisma.workspaceMember.findMany({
-    where: {
-      userId: session.user.id,
-    },
-    include: {
-      workspace: true,
-    },
-  });
+  const memberships = await getUserWorkspaceMemberships(session.user.id);
 
   return (
     <div className="max-w-5xl mx-auto p-6">

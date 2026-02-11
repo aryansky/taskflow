@@ -1,10 +1,10 @@
 import PageTitle from "@/components/ui/page-title";
-import { requireWorkspaceMember } from "@/lib/guards/requireWorkspaceMember";
-import prisma from "@/lib/prisma";
+import { requireWorkspaceMember } from "@/lib/workspace/guards";
 import { notFound } from "next/navigation";
 import MemberCard from "../../_components/MemberCard";
 import LeaveWorkspaceDialog from "../../_components/LeaveWorkspaceDialog";
 import RemoveMemberDialog from "../../_components/RemoveMemberDialog";
+import { getMembers, getWorkspace } from "@/lib/workspace/queries";
 
 export default async function Members({
   params,
@@ -12,29 +12,12 @@ export default async function Members({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-
-  const workspace = await prisma.workspace.findUnique({
-    where: {
-      id: id,
-    },
-    select: {
-      id: true,
-      name: true,
-    },
-  });
-
+  const workspace = await getWorkspace(id);
   if (!workspace) notFound();
 
   const membership = await requireWorkspaceMember(workspace.id);
 
-  const allMembers = await prisma.workspaceMember.findMany({
-    where: { workspaceId: workspace.id },
-    include: { user: true },
-  });
-
-  const owner = allMembers.find((m) => m.role === "OWNER");
-  const admins = allMembers.filter((m) => m.role === "ADMIN");
-  const members = allMembers.filter((m) => m.role === "MEMBER");
+  const members = await getMembers(workspace.id);
 
   return (
     <div className="max-w-3xl lg:max-w-5xl mx-auto p-6">
@@ -44,8 +27,8 @@ export default async function Members({
         <div className="prose dark:prose-invert my-4">
           <h2>Owner</h2>
         </div>
-        {owner ? (
-          <MemberCard member={owner} />
+        {members.owner ? (
+          <MemberCard member={members.owner} />
         ) : (
           <p className="text-sm text-muted-foreground">
             No owner found for this workspace
@@ -55,12 +38,12 @@ export default async function Members({
         <div className="prose dark:prose-invert my-4">
           <h2>Admins</h2>
         </div>
-        {admins.length === 0 ? (
+        {members.admins.length === 0 ? (
           <p className="text-sm text-muted-foreground">
             No admin found for this workspace
           </p>
         ) : (
-          admins.map((admin) => {
+          members.admins.map((admin) => {
             return <MemberCard key={admin.id} member={admin} />;
           })
         )}
@@ -68,12 +51,12 @@ export default async function Members({
         <div className="prose dark:prose-invert my-4">
           <h2>Members</h2>
         </div>
-        {members.length === 0 ? (
+        {members.members.length === 0 ? (
           <p className="text-sm text-muted-foreground">
             No members found for this workspace
           </p>
         ) : (
-          members.map((member) => {
+          members.members.map((member) => {
             return <MemberCard key={member.id} member={member} />;
           })
         )}

@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import { forbidden, notFound } from "next/navigation";
 import UpdateTaskForm from "../../_components/UpdateTaskForm";
-import { requireWorkspaceMember } from "@/lib/guards/requireWorkspaceMember";
+import { requireWorkspaceMember } from "@/lib/workspace/guards";
 
 export default async function EditTask({
   params,

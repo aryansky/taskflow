@@ -1,6 +1,6 @@
 "use server";
 
-import { requireWorkspaceMember } from "@/lib/guards/requireWorkspaceMember";
+import { requireWorkspaceMember } from "@/lib/workspace/guards";
 import prisma from "@/lib/prisma";
 import { inviteSchema } from "../../schema";
 import z from "zod";

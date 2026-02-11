@@ -5,7 +5,7 @@ import { forbidden } from "next/navigation";
 import { z } from "zod";
 import { TaskState } from "@/app/(protected)/tasks/types";
 import { createTaskSchema } from "@/app/(protected)/tasks/schema";
-import { requireWorkspaceMember } from "@/lib/guards/requireWorkspaceMember";
+import { requireWorkspaceMember } from "@/lib/workspace/guards";
 
 export async function createTask(
   data: z.infer<typeof createTaskSchema>,

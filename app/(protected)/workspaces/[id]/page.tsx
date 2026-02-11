@@ -1,11 +1,11 @@
 import PageTitle from "@/components/ui/page-title";
 import { auth } from "@/lib/auth";
-import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import TaskCard from "../../tasks/_components/TaskCard";
-import { requireWorkspaceMember } from "@/lib/guards/requireWorkspaceMember";
+import { requireWorkspaceMember } from "@/lib/workspace/guards";
 import EditWorkspaceDialog from "../_components/EditWorkspaceDialog";
+import { getWorkspaceWithTasks } from "@/lib/workspace/queries";
 
 export default async function Workspace({
   params,
@@ -14,21 +14,9 @@ export default async function Workspace({
 }) {
   const session = await auth();
   if (!session) redirect("/api/auth/signin");
-
   const { id } = await params;
 
-  const workspace = await prisma.workspace.findUnique({
-    where: { id },
-    include: {
-      tasks: {
-        include: {
-          assignedTo: { select: { email: true } },
-          createdBy: { select: { email: true } },
-        },
-      },
-    },
-  });
-
+  const workspace = await getWorkspaceWithTasks(id);
   if (!workspace) notFound();
 
   const membership = await requireWorkspaceMember(workspace.id);
