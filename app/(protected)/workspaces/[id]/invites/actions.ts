@@ -2,9 +2,9 @@
 
 import { requireWorkspaceMember } from "@/lib/workspace/guards";
 import prisma from "@/lib/prisma";
-import { inviteSchema } from "../../schema";
 import z from "zod";
-import { InviteReturnState } from "../../types";
+import { inviteSchema } from "../schema";
+import { InviteReturnState } from "@/app/(protected)/workspaces/[id]/types";
 
 export async function createInvite(
   data: z.infer<typeof inviteSchema>,

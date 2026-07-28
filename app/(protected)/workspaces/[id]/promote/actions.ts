@@ -2,8 +2,9 @@
 
 import prisma from "@/lib/prisma";
 import z from "zod";
-import { promoteToAdminSchema } from "../../schema";
+
 import { requireWorkspaceMember } from "@/lib/workspace/guards";
+import { promoteToAdminSchema } from "../schema";
 
 interface PromoteToAdminResult {
   errors?: { userEmail?: string[] };

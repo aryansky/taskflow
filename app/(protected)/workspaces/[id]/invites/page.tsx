@@ -1,9 +1,9 @@
-import PageTitle from "@/components/ui/page-title";
 import { requireWorkspaceMember } from "@/lib/workspace/guards";
 import { notFound } from "next/navigation";
-import CreateInviteDialog from "../../_components/CreateInviteDialog";
-import Invites from "../../_components/Invites";
+import CreateInviteDialog from "../_components/CreateInviteDialog";
+import Invites from "../_components/Invites";
 import { getWorkspace } from "@/lib/workspace/queries";
+import MainContainer from "@/components/ui/layout/main-container";
 
 export default async function InvitesPage({
   params,
@@ -19,10 +19,16 @@ export default async function InvitesPage({
   const canInvite = membership.role === "OWNER" || membership.role === "ADMIN";
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
-      <PageTitle>Invites</PageTitle>
-      {canInvite && <CreateInviteDialog workspaceId={workspace.id} />}
+    <MainContainer
+      heading="Invites"
+      breadcrumbs={[
+        { title: "workspaces", href: "/workspaces" },
+        { title: `${workspace.name}`, href: `/workspaces/${workspace.id}` },
+        { title: "Invites", href: `/workspaces/${workspace.id}/invites` },
+      ]}
+      actions={canInvite && <CreateInviteDialog workspaceId={workspace.id} />}
+    >
       <Invites workspaceId={workspace.id} />
-    </div>
+    </MainContainer>
   );
 }

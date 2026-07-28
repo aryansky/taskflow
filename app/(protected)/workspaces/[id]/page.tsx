@@ -1,11 +1,12 @@
-import PageTitle from "@/components/ui/page-title";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import TaskCard from "../../tasks/_components/TaskCard";
 import { requireWorkspaceMember } from "@/lib/workspace/guards";
-import EditWorkspaceDialog from "../_components/EditWorkspaceDialog";
 import { getWorkspaceWithTasks } from "@/lib/workspace/queries";
+import { Button } from "@/components/ui/button";
+import EditWorkspaceDialog from "./_components/EditWorkspaceDialog";
+import TaskCard from "../../tasks/_components/TaskCard";
+import MainContainer from "@/components/ui/layout/main-container";
 
 export default async function Workspace({
   params,
@@ -21,42 +22,54 @@ export default async function Workspace({
 
   const membership = await requireWorkspaceMember(workspace.id);
 
-  if (workspace.tasks.length === 0) {
-    return (
-      <div className="max-w-3xl lg:max-w-5xl mx-auto p-6">
-        <PageTitle>{workspace.name}</PageTitle>
-        <hr />
-        <h2 className="text-2xl font-semibold my-6">No tasks found</h2>
-      </div>
-    );
-  }
-
   return (
-    <div className="max-w-3xl lg:max-w-5xl mx-auto p-6">
-      <PageTitle className="flex gap-4 items-center">
-        {workspace.name}{" "}
-        {membership.role === "OWNER" && (
-          <EditWorkspaceDialog
-            workspaceName={workspace.name}
-            workspaceId={workspace.id}
-          />
-        )}
-      </PageTitle>
-      <hr />
+    <MainContainer
+      breadcrumbs={[
+        { title: "workspaces", href: "/workspaces" },
+        { title: `${workspace.name}`, href: `/workspaces/${workspace.id}` },
+      ]}
+      heading={workspace.name}
+      actions={
+        <div className="flex gap-4 p-4 pb-0">
+          {membership.role === "OWNER" && (
+            <EditWorkspaceDialog
+              workspaceName={workspace.name}
+              workspaceId={workspace.id}
+            />
+          )}
+          <Button asChild>
+            <Link href={`/workspaces/${workspace.id}/invites`}>Invites</Link>
+          </Button>
+          <Button asChild>
+            <Link href={`/workspaces/${workspace.id}/members`}>members</Link>
+          </Button>
+          <Button asChild>
+            <Link href={`/workspaces/${workspace.id}/new-task`}>new task</Link>
+          </Button>
+          <Button asChild>
+            <Link href={`/workspaces/${workspace.id}/promote`}>promote</Link>
+          </Button>
+        </div>
+      }
+    >
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 my-6">
-        {workspace.tasks.map((task) => {
-          return (
-            <Link href={`/tasks/${task.id}`} key={task.id}>
-              <TaskCard
-                {...task}
-                taskId={task.id}
-                assignedToEmail={task.assignedTo.email}
-                createdByEmail={task.createdBy.email}
-              />
-            </Link>
-          );
-        })}
+        {workspace.tasks.length === 0 ? (
+          <h2 className="text-2xl font-semibold my-6">No tasks found</h2>
+        ) : (
+          workspace.tasks.map((task) => {
+            return (
+              <Link href={`/tasks/${task.id}`} key={task.id}>
+                <TaskCard
+                  {...task}
+                  taskId={task.id}
+                  assignedToEmail={task.assignedTo.email}
+                  createdByEmail={task.createdBy.email}
+                />
+              </Link>
+            );
+          })
+        )}
       </section>
-    </div>
+    </MainContainer>
   );
 }

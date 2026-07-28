@@ -1,9 +1,8 @@
 import { requireWorkspaceMember } from "@/lib/workspace/guards";
 import AdminPromoteForm from "./AdminPromoteForm";
 import { forbidden, notFound } from "next/navigation";
-import PageTitle from "@/components/ui/page-title";
-
 import { getWorkspace } from "@/lib/workspace/queries";
+import MainContainer from "@/components/ui/layout/main-container";
 
 export default async function Promote({
   params,
@@ -19,10 +18,17 @@ export default async function Promote({
   if (membership.role !== "OWNER") forbidden();
 
   return (
-    <div className="max-w-xl mx-auto p-6">
-      <PageTitle>{workspace.name}</PageTitle>
-      <hr className="mb-12" />
-      <AdminPromoteForm workspaceId={membership.workspaceId} />
-    </div>
+    <MainContainer
+      breadcrumbs={[
+        { title: "workspaces", href: "/workspaces" },
+        { title: `${workspace.name}`, href: `/workspaces/${workspace.id}` },
+        { title: "Promote", href: `/workspaces/${workspace.id}/promote` },
+      ]}
+      heading={"Promote"}
+    >
+      <div className="max-w-2xl">
+        <AdminPromoteForm workspaceId={membership.workspaceId} />
+      </div>
+    </MainContainer>
   );
 }

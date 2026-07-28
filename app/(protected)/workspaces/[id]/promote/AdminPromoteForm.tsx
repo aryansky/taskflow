@@ -11,9 +11,10 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { promoteToAdmin } from "./actions";
-import { promoteToAdminSchema } from "../../schema";
+
 import { toast } from "sonner";
 import { ButtonGroup } from "@/components/ui/button-group";
+import { promoteToAdminSchema } from "../schema";
 
 export default function AdminPromoteForm({
   workspaceId,

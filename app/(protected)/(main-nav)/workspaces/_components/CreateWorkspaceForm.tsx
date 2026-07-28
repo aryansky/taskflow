@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/dialog";
 import {
   Field,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -18,17 +17,15 @@ import {
 import { Input } from "@/components/ui/input";
 
 import { useForm } from "react-hook-form";
-import { inviteSchema } from "../schema";
+import { createWorkspaceSchema } from "../schema";
 import z from "zod";
+import { createWorkspace } from "../../../workspaces/[id]/actions";
 import { useRouter } from "next/navigation";
-import { createInvite } from "../[id]/invites/actions";
 
-export default function CreateInviteForm({
+export default function CreateWorkspaceForm({
   onSuccess,
-  workspaceId,
 }: {
   onSuccess: () => void;
-  workspaceId: string;
 }) {
   const {
     register,
@@ -36,16 +33,16 @@ export default function CreateInviteForm({
     setError,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<z.infer<typeof inviteSchema>>();
+  } = useForm<z.infer<typeof createWorkspaceSchema>>();
 
   const router = useRouter();
 
-  const onSubmit = async (data: z.infer<typeof inviteSchema>) => {
-    const response = await createInvite(data, workspaceId);
+  const onSubmit = async (data: z.infer<typeof createWorkspaceSchema>) => {
+    const response = await createWorkspace(data);
 
     if (response.errors) {
       Object.entries(response.errors).forEach(([field, messages]) => {
-        setError(field as keyof z.infer<typeof inviteSchema>, {
+        setError(field as keyof z.infer<typeof createWorkspaceSchema>, {
           type: "server",
           message: messages[0],
         });
@@ -61,20 +58,17 @@ export default function CreateInviteForm({
   };
 
   return (
-    <DialogContent className="sm:max-w-md">
+    <DialogContent className="sm:max-w-sm">
       <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
         <DialogHeader>
-          <DialogTitle>Invite People</DialogTitle>
+          <DialogTitle>Create Workspace</DialogTitle>
         </DialogHeader>
         <FieldGroup>
           <Field>
-            <FieldLabel htmlFor="email">Email</FieldLabel>
-            <Input id="email" {...register("email")} />
-            <FieldDescription>
-              Invite a user by entering their email
-            </FieldDescription>
-            {errors.email && (
-              <FieldError errors={[{ message: errors.email.message }]} />
+            <FieldLabel htmlFor="name">Name</FieldLabel>
+            <Input id="name" {...register("name")} />
+            {errors.name && (
+              <FieldError errors={[{ message: errors.name.message }]} />
             )}
           </Field>
         </FieldGroup>
@@ -85,7 +79,7 @@ export default function CreateInviteForm({
             </Button>
           </DialogClose>
           <Button disabled={isSubmitting} type="submit">
-            Invite
+            Create
           </Button>
         </DialogFooter>
       </form>

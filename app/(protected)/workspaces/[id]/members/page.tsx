@@ -1,10 +1,10 @@
-import PageTitle from "@/components/ui/page-title";
 import { requireWorkspaceMember } from "@/lib/workspace/guards";
 import { notFound } from "next/navigation";
-import MemberCard from "../../_components/MemberCard";
-import LeaveWorkspaceDialog from "../../_components/LeaveWorkspaceDialog";
-import RemoveMemberDialog from "../../_components/RemoveMemberDialog";
 import { getMembers, getWorkspace } from "@/lib/workspace/queries";
+import MemberCard from "../_components/MemberCard";
+import LeaveWorkspaceDialog from "../_components/LeaveWorkspaceDialog";
+import RemoveMemberDialog from "../_components/RemoveMemberDialog";
+import MainContainer from "@/components/ui/layout/main-container";
 
 export default async function Members({
   params,
@@ -20,9 +20,14 @@ export default async function Members({
   const members = await getMembers(workspace.id);
 
   return (
-    <div className="max-w-3xl lg:max-w-5xl mx-auto p-6">
-      <PageTitle>{workspace.name} members</PageTitle>
-      <hr />
+    <MainContainer
+      breadcrumbs={[
+        { title: "workspaces", href: "/workspaces" },
+        { title: `${workspace.name}`, href: `/workspaces/${workspace.id}` },
+        { title: "Members", href: `/workspaces/${workspace.id}/members` },
+      ]}
+      heading="Members"
+    >
       <section className="my-6 max-w-xl">
         <div className="prose dark:prose-invert my-4">
           <h2>Owner</h2>
@@ -69,6 +74,6 @@ export default async function Members({
           <RemoveMemberDialog workspaceId={membership.workspaceId} />
         )}
       </footer>
-    </div>
+    </MainContainer>
   );
 }

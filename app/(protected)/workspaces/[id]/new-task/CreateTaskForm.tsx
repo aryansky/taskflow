@@ -142,7 +142,7 @@ export default function CreateTaskForm({
               <FieldError errors={[{ message: errors.dueDate.message }]} />
             )}
           </Field>
-          <div className="flex justify-end">
+          <div className="flex justify-start mt-4">
             <Button
               className="bg-green-600 hover:bg-green-700"
               disabled={isSubmitting}

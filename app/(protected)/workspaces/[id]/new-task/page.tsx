@@ -2,6 +2,7 @@ import { requireWorkspaceMember } from "@/lib/workspace/guards";
 import CreateTaskForm from "./CreateTaskForm";
 import { forbidden, notFound } from "next/navigation";
 import { getWorkspace } from "@/lib/workspace/queries";
+import MainContainer from "@/components/ui/layout/main-container";
 
 export default async function NewTask({
   params,
@@ -17,11 +18,22 @@ export default async function NewTask({
   if (membership.role !== "OWNER" && membership.role !== "ADMIN") forbidden();
 
   return (
-    <div className="max-w-xl mx-auto p-6">
-      <h1 className="text-4xl tracking-tight font-bold text-center mb-4">
-        Create Task for {workspace.name}
-      </h1>
-      <CreateTaskForm workspaceId={workspace.id} />
-    </div>
+    <MainContainer
+      breadcrumbs={[
+        { title: "workspaces", href: "/workspaces" },
+        { title: `${workspace.name}`, href: `/workspaces/${workspace.id}` },
+        {
+          title: "new task",
+          href: `/workspaces/${workspace.id}/new-task`,
+        },
+      ]}
+    >
+      <div className="max-w-2xl mt-4">
+        <h1 className="text-4xl tracking-tight font-bold  mb-12">
+          Create Task for {workspace.name}
+        </h1>
+        <CreateTaskForm workspaceId={workspace.id} />
+      </div>
+    </MainContainer>
   );
 }

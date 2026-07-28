@@ -11,8 +11,8 @@ export default function PageTitle({
   return (
     <h1
       className={cn(
+        "text-4xl tracking-tight font-semibold text-wrap",
         className,
-        "text-4xl tracking-tight font-semibold text-wrap mb-6",
       )}
     >
       {children}

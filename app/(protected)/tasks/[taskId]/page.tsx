@@ -8,6 +8,7 @@ import CreateCommentForm from "../_components/CreateCommentForm";
 import CommentList from "../_components/CommentList";
 import { Calendar } from "lucide-react";
 import { requireWorkspaceMember } from "@/lib/workspace/guards";
+import MainContainer from "@/components/ui/layout/main-container";
 
 export default async function TaskView({
   params,
@@ -20,7 +21,7 @@ export default async function TaskView({
     include: {
       assignedTo: { select: { id: true, name: true, email: true } },
       createdBy: { select: { id: true, name: true, email: true } },
-      workspace: { select: { name: true } },
+      workspace: { select: { name: true, id: true } },
     },
   });
   if (!task) notFound();
@@ -40,7 +41,16 @@ export default async function TaskView({
     membership.userId === task.assignedToId;
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
+    <MainContainer
+      breadcrumbs={[
+        { title: "workspaces", href: "/workspaces" },
+        {
+          title: `${task.workspace.name}`,
+          href: `/workspaces/${task.workspace.id}`,
+        },
+        { title: task.title, href: `/tasks/${task.id}` },
+      ]}
+    >
       <article className="prose dark:prose-invert mx-auto">
         <div className="flex justify-between items-center w-full">
           <h1 className="flex justify-between items-center mb-0">
@@ -89,6 +99,6 @@ export default async function TaskView({
           <CommentList taskId={task.id} />
         </div>
       </section>
-    </div>
+    </MainContainer>
   );
 }

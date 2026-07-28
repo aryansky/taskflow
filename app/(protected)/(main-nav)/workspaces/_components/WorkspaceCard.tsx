@@ -22,7 +22,7 @@ export default function WorkspaceCard({
   role,
 }: WorkspaceCardProps) {
   return (
-    <Card className="w-full max-w-sm">
+    <Card className="w-full max-w-sm rounded bg-[#b4abc40d]">
       <CardHeader>
         <CardTitle>{name}</CardTitle>
         <CardAction>
