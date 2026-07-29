@@ -5,12 +5,14 @@ import MemberCard from "../_components/MemberCard";
 import LeaveWorkspaceDialog from "../_components/LeaveWorkspaceDialog";
 import RemoveMemberDialog from "../_components/RemoveMemberDialog";
 import MainContainer from "@/components/ui/layout/main-container";
+import { auth } from "@/lib/auth";
 
 export default async function Members({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const session = await auth();
   const { id } = await params;
   const workspace = await getWorkspace(id);
   if (!workspace) notFound();
@@ -26,6 +28,8 @@ export default async function Members({
         { title: `${workspace.name}`, href: `/workspaces/${workspace.id}` },
         { title: "Members", href: `/workspaces/${workspace.id}/members` },
       ]}
+      backPath={"/workspaces"}
+      user={session!.user}
       heading="Members"
     >
       <section className="my-6 max-w-xl">

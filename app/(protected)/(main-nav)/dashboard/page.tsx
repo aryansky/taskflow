@@ -19,6 +19,7 @@ export default async function Dashboard() {
     <MainContainer
       breadcrumbs={[{ title: "Dashboard", href: "/dashboard" }]}
       heading="Dashboard"
+      user={session!.user}
       description="Overview of your assigned tasks"
     >
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

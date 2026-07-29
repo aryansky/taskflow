@@ -30,7 +30,7 @@ export function NavUser({
         <DropdownMenuTrigger asChild>
           <div className="w-full flex p-2 justify-center items-center">
             <Button
-              className="rounded-full h-12 w-12 lg:rounded-lg lg:w-full lg:h-[50] hover:-translate-y-1 lg:hover:translate-y-0"
+              className="rounded-full h-12 w-12 lg:rounded-lg lg:w-full lg:h-[50] "
               variant={"ghost"}
             >
               <Avatar className="h-8 w-8 rounded-full">

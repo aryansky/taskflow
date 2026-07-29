@@ -3,12 +3,14 @@ import AdminPromoteForm from "./AdminPromoteForm";
 import { forbidden, notFound } from "next/navigation";
 import { getWorkspace } from "@/lib/workspace/queries";
 import MainContainer from "@/components/ui/layout/main-container";
+import { auth } from "@/lib/auth";
 
 export default async function Promote({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const session = await auth();
   const { id } = await params;
   const workspace = await getWorkspace(id);
   if (!workspace) notFound();
@@ -24,6 +26,8 @@ export default async function Promote({
         { title: `${workspace.name}`, href: `/workspaces/${workspace.id}` },
         { title: "Promote", href: `/workspaces/${workspace.id}/promote` },
       ]}
+      backPath={`/workspaces/${workspace.id}`}
+      user={session!.user}
       heading={"Promote"}
     >
       <div className="max-w-2xl">

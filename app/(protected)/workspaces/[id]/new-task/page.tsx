@@ -3,12 +3,14 @@ import CreateTaskForm from "./CreateTaskForm";
 import { forbidden, notFound } from "next/navigation";
 import { getWorkspace } from "@/lib/workspace/queries";
 import MainContainer from "@/components/ui/layout/main-container";
+import { auth } from "@/lib/auth";
 
 export default async function NewTask({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const session = await auth();
   const { id } = await params;
   const workspace = await getWorkspace(id);
   if (!workspace) notFound();
@@ -27,6 +29,8 @@ export default async function NewTask({
           href: `/workspaces/${workspace.id}/new-task`,
         },
       ]}
+      backPath={`/workspaces/${workspace.id}`}
+      user={session!.user}
     >
       <div className="max-w-2xl mt-4">
         <h1 className="text-4xl tracking-tight font-bold  mb-12">

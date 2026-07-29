@@ -28,6 +28,8 @@ export default async function Workspace({
         { title: "workspaces", href: "/workspaces" },
         { title: `${workspace.name}`, href: `/workspaces/${workspace.id}` },
       ]}
+      backPath={"/workspaces"}
+      user={session.user}
       heading={workspace.name}
       actions={
         <div className="flex gap-4 p-4 pb-0">

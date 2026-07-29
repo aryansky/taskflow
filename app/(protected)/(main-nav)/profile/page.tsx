@@ -8,7 +8,10 @@ export default async function Profile() {
   const user = session!.user;
 
   return (
-    <MainContainer breadcrumbs={[{ title: "Profile", href: "/profile" }]}>
+    <MainContainer
+      breadcrumbs={[{ title: "Profile", href: "/profile" }]}
+      user={session!.user}
+    >
       <article className="prose dark:prose-invert mx-auto h-full p-8">
         <div className="flex flex-col items-center">
           <h1>Profile</h1>

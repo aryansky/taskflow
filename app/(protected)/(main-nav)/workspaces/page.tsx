@@ -15,6 +15,7 @@ export default async function AllWorkspaces() {
     <MainContainer
       breadcrumbs={[{ title: "Workspaces", href: "/workspaces" }]}
       heading="All Workspaces"
+      user={session.user}
     >
       <CreateWorkspaceDialog />
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 my-6">
