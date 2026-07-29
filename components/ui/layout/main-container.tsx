@@ -97,7 +97,7 @@ export default function MainContainer({
           </div>
         </header>
         <Separator orientation="horizontal" className=" h-4" />
-        <div className="max-w-5xl mx-auto p-6">
+        <div className="max-w-5xl mx-auto p-6 overflow-auto">
           {heading && (
             <PageTitle className={headingClassName}>{heading}</PageTitle>
           )}

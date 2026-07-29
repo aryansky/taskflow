@@ -9,12 +9,14 @@ import CommentList from "../_components/CommentList";
 import { Calendar } from "lucide-react";
 import { requireWorkspaceMember } from "@/lib/workspace/guards";
 import MainContainer from "@/components/ui/layout/main-container";
+import { auth } from "@/lib/auth";
 
 export default async function TaskView({
   params,
 }: {
   params: Promise<{ taskId: string }>;
 }) {
+  const session = await auth();
   const { taskId } = await params;
   const task = await prisma.task.findUnique({
     where: { id: taskId },
@@ -50,6 +52,8 @@ export default async function TaskView({
         },
         { title: task.title, href: `/tasks/${task.id}` },
       ]}
+      backPath={`/workspaces/${task.workspace.id}`}
+      user={session!.user}
     >
       <article className="prose dark:prose-invert mx-auto">
         <div className="flex justify-between items-center w-full">

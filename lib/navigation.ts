@@ -8,7 +8,11 @@ import {
   Users,
 } from "lucide-react";
 
-export function getMainNavItems() {
+export function getMainNavItems(): {
+  title: string;
+  href: string;
+  icon: keyof typeof navIcons;
+}[] {
   return [
     { title: "Dashboard", href: "/dashboard", icon: "home" },
     { title: "All Workspaces", href: "/workspaces", icon: "group" },
@@ -16,7 +20,11 @@ export function getMainNavItems() {
   ];
 }
 
-export function getWorkspaceNavItems(workspaceId: string) {
+export function getWorkspaceNavItems(workspaceId: string): {
+  title: string;
+  href: string;
+  icon: keyof typeof navIcons;
+}[] {
   return [
     {
       title: "Invites",
@@ -41,7 +49,11 @@ export function getWorkspaceNavItems(workspaceId: string) {
   ];
 }
 
-export function getMobileMainNavItems() {
+export function getMobileMainNavItems(): {
+  title: string;
+  href: string;
+  icon: keyof typeof navIcons;
+}[] {
   return [
     { title: "Dashboard", href: "/dashboard", icon: "home" },
     { title: "All Workspaces", href: "/workspaces", icon: "group" },
@@ -49,7 +61,11 @@ export function getMobileMainNavItems() {
   ];
 }
 
-export function getMobileWorkspaceNavItems(workspaceId: string) {
+export function getMobileWorkspaceNavItems(workspaceId: string): {
+  title: string;
+  href: string;
+  icon: keyof typeof navIcons;
+}[] {
   return [
     {
       title: "Invites",

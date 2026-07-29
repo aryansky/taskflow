@@ -28,7 +28,7 @@ export default async function Members({
         { title: `${workspace.name}`, href: `/workspaces/${workspace.id}` },
         { title: "Members", href: `/workspaces/${workspace.id}/members` },
       ]}
-      backPath={"/workspaces"}
+      backPath={`/workspaces/${workspace.id}`}
       user={session!.user}
       heading="Members"
     >
