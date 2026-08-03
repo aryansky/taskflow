@@ -26,10 +26,14 @@ export default function EditWorkspaceForm({
   onSuccess,
   workspaceId,
   workspaceName,
+  workspaceImageUrl,
+  workspaceDescription,
 }: {
   onSuccess: () => void;
   workspaceId: string;
   workspaceName: string;
+  workspaceImageUrl: string | null;
+  workspaceDescription: string | null;
 }) {
   const {
     register,
@@ -40,6 +44,8 @@ export default function EditWorkspaceForm({
   } = useForm<z.infer<typeof updateWorkspaceSchema>>({
     defaultValues: {
       name: workspaceName,
+      imageUrl: workspaceImageUrl ?? undefined,
+      description: workspaceDescription ?? undefined,
     },
   });
 
@@ -77,6 +83,20 @@ export default function EditWorkspaceForm({
             <Input id="name" {...register("name")} />
             {errors.name && (
               <FieldError errors={[{ message: errors.name.message }]} />
+            )}
+          </Field>
+          <Field>
+            <FieldLabel htmlFor="imageUrl">Image Url</FieldLabel>
+            <Input id="imageUrl" {...register("imageUrl")} />
+            {errors.imageUrl && (
+              <FieldError errors={[{ message: errors.imageUrl.message }]} />
+            )}
+          </Field>
+          <Field>
+            <FieldLabel htmlFor="description">Description</FieldLabel>
+            <Input id="description" {...register("description")} />
+            {errors.description && (
+              <FieldError errors={[{ message: errors.description.message }]} />
             )}
           </Field>
         </FieldGroup>

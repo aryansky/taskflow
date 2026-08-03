@@ -5,6 +5,8 @@ const workspaceSchema = z.object({
     .string()
     .min(2, "Must be at least 2 characters")
     .max(32, "Must be less than 32 characters"),
+  imageUrl: z.string().optional(),
+  description: z.string().optional(),
 });
 
 const emailSchema = z.object({

@@ -46,6 +46,8 @@ export async function createWorkspace(
     const workspace = await tx.workspace.create({
       data: {
         name: parsed.data.name,
+        imageUrl: parsed.data.imageUrl || undefined,
+        description: parsed.data.description || undefined,
       },
     });
 
@@ -171,6 +173,8 @@ export async function updateWorkspace(
     },
     data: {
       name: parsed.data.name,
+      imageUrl: parsed.data.imageUrl || undefined,
+      description: parsed.data.description || undefined,
     },
   });
 

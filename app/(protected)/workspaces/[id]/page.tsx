@@ -35,6 +35,8 @@ export default async function Workspace({
         <div className="flex gap-4 p-4 pb-0">
           {membership.role === "OWNER" && (
             <EditWorkspaceDialog
+              workspaceDescription={workspace.description}
+              workspaceImageUrl={workspace.imageUrl}
               workspaceName={workspace.name}
               workspaceId={workspace.id}
             />

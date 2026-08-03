@@ -17,10 +17,12 @@ import {
 import { Input } from "@/components/ui/input";
 
 import { useForm } from "react-hook-form";
-import { createWorkspaceSchema } from "../schema";
+
 import z from "zod";
 import { createWorkspace } from "../../../workspaces/[id]/actions";
 import { useRouter } from "next/navigation";
+import { createWorkspaceSchema } from "@/app/(protected)/workspaces/[id]/schema";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function CreateWorkspaceForm({
   onSuccess,
@@ -69,6 +71,20 @@ export default function CreateWorkspaceForm({
             <Input id="name" {...register("name")} />
             {errors.name && (
               <FieldError errors={[{ message: errors.name.message }]} />
+            )}
+          </Field>
+          <Field>
+            <FieldLabel htmlFor="imageUrl">Image Url</FieldLabel>
+            <Input id="imageUrl" {...register("imageUrl")} />
+            {errors.imageUrl && (
+              <FieldError errors={[{ message: errors.imageUrl.message }]} />
+            )}
+          </Field>
+          <Field>
+            <FieldLabel htmlFor="description">Description</FieldLabel>
+            <Textarea id="description" {...register("description")} />
+            {errors.description && (
+              <FieldError errors={[{ message: errors.description.message }]} />
             )}
           </Field>
         </FieldGroup>

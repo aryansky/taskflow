@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import CreateWorkspaceForm from "./CreateWorkspaceForm";
 import { useState } from "react";
+import { Plus } from "lucide-react";
 
 export default function CreateWorkspaceDialog() {
   const [open, setOpen] = useState(false);
@@ -11,7 +12,9 @@ export default function CreateWorkspaceDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Create Workspace</Button>
+        <Button variant="default">
+          <Plus /> New
+        </Button>
       </DialogTrigger>
       <CreateWorkspaceForm onSuccess={() => setOpen(false)} />
     </Dialog>

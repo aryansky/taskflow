@@ -9,9 +9,13 @@ import { Edit } from "lucide-react";
 export default function EditWorkspaceDialog({
   workspaceId,
   workspaceName,
+  workspaceImageUrl,
+  workspaceDescription,
 }: {
   workspaceId: string;
   workspaceName: string;
+  workspaceImageUrl: string | null;
+  workspaceDescription: string | null;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -25,6 +29,8 @@ export default function EditWorkspaceDialog({
       <EditWorkspaceForm
         workspaceName={workspaceName}
         workspaceId={workspaceId}
+        workspaceDescription={workspaceDescription}
+        workspaceImageUrl={workspaceImageUrl}
         onSuccess={() => setOpen(false)}
       />
     </Dialog>

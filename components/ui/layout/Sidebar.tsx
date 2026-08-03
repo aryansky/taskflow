@@ -50,11 +50,7 @@ export function Sidebar({
   const pathname = usePathname();
 
   return (
-    <aside
-      className={cn(
-        "bg-white dark:bg-[#0d0c10] h-screen flex-col hidden md:flex w-[75] lg:w-[250]",
-      )}
-    >
+    <aside className={cn("h-screen flex-col hidden md:flex w-[75] lg:w-[250]")}>
       <header className="flex justify-start items-center gap-4 p-4">
         {backPath ? (
           <div className="w-full h-full flex justify-center lg:justify-start lg:px-2 items-center">

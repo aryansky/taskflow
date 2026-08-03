@@ -4,6 +4,7 @@ import { getUserWorkspaceMemberships } from "@/lib/workspace/queries";
 import CreateWorkspaceDialog from "./_components/CreateWorkspaceDialog";
 import WorkspaceCard from "./_components/WorkspaceCard";
 import MainContainer from "@/components/ui/layout/main-container";
+import Link from "next/link";
 
 export default async function AllWorkspaces() {
   const session = await auth();
@@ -16,17 +17,19 @@ export default async function AllWorkspaces() {
       breadcrumbs={[{ title: "Workspaces", href: "/workspaces" }]}
       heading="All Workspaces"
       user={session.user}
+      actions={<CreateWorkspaceDialog />}
     >
-      <CreateWorkspaceDialog />
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 my-6">
+      <section className="flex flex-col my-6 max-w-xl">
         {memberships.map((w) => {
           return (
-            <WorkspaceCard
-              key={w.id}
-              name={w.workspace.name}
-              workspaceId={w.workspace.id}
-              role={w.role}
-            />
+            <Link href={`/workspaces/${w.workspace.id}`} key={w.id}>
+              <WorkspaceCard
+                workspaceId={w.workspace.id}
+                imageUrl={w.workspace.imageUrl}
+                description={w.workspace.description}
+                name={w.workspace.name}
+              />
+            </Link>
           );
         })}
       </section>
