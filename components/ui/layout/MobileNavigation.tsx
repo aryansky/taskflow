@@ -121,7 +121,7 @@ export function MobileNavigation({
 
       {/* Mobile Dock */}
       <div className="fixed rounded inset-x-0 bottom-0 z-40 flex items justify-center md:hidden">
-        <div className="mb-4 rounded-full flex gap-1 bg-gray-100 dark:bg-neutral-900 p-2 px-4">
+        <div className="mb-4 rounded-full flex gap-1 border bg-gray-100 dark:bg-neutral-900 p-2 px-4">
           {mobileNavItems.map((item) => {
             return (
               <MobileDockItem

@@ -47,7 +47,7 @@ export default function MainContainer({
 }: LayoutProps) {
   return (
     <div className="w-full h-screen md:p-2 md:pl-0">
-      <div className="w-full h-full bg-[#fafafa] dark:bg-[#121212] md:border md:rounded-xl">
+      <div className="w-full h-full flex flex-col bg-[#fafafa] dark:bg-[#121212] md:border md:rounded-xl">
         <header className="w-full flex items-center justify-between px-2 md:py-3 md:px-8">
           <div>
             <Breadcrumb className="hidden md:block">
@@ -97,15 +97,17 @@ export default function MainContainer({
           </div>
         </header>
         <Separator orientation="horizontal" className=" h-4" />
-        <div className="max-w-5xl mx-auto p-6 overflow-auto">
-          <div className="flex justify-between">
-            {heading && (
-              <PageTitle className={headingClassName}>{heading}</PageTitle>
-            )}
-            {actions}
+        <div className="w-full overflow-auto">
+          <div className="w-full md:w-[98%] mx-auto p-6">
+            <div className="flex justify-between items-center">
+              {heading && (
+                <PageTitle className={headingClassName}>{heading}</PageTitle>
+              )}
+              {actions}
+            </div>
+            {description && <h3>{description}</h3>}
+            {children}
           </div>
-          {description && <h3>{description}</h3>}
-          {children}
         </div>
       </div>
     </div>
