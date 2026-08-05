@@ -16,11 +16,13 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { updateWorkspaceSchema } from "../schema";
 import z from "zod";
 import { updateWorkspace } from "../actions";
 import { useRouter } from "next/navigation";
+import WorkspaceImage from "@/app/(protected)/(main-nav)/workspaces/_components/WorkspaceImage";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function EditWorkspaceForm({
   onSuccess,
@@ -38,8 +40,8 @@ export default function EditWorkspaceForm({
   const {
     register,
     handleSubmit,
+    control,
     setError,
-    reset,
     formState: { errors, isSubmitting },
   } = useForm<z.infer<typeof updateWorkspaceSchema>>({
     defaultValues: {
@@ -66,10 +68,15 @@ export default function EditWorkspaceForm({
 
     if (response.success) {
       onSuccess();
-      reset();
       router.refresh();
     }
   };
+
+  const imageSrc = useWatch({
+    control,
+    name: "imageUrl",
+    defaultValue: workspaceImageUrl ?? "",
+  });
 
   return (
     <DialogContent className="sm:max-w-sm">
@@ -78,6 +85,9 @@ export default function EditWorkspaceForm({
           <DialogTitle>Update Workspace</DialogTitle>
         </DialogHeader>
         <FieldGroup>
+          <div className="w-full h-[125] flex justify-center my-2">
+            <WorkspaceImage size={125} imageUrl={imageSrc ?? null} />
+          </div>
           <Field>
             <FieldLabel htmlFor="name">Name</FieldLabel>
             <Input id="name" {...register("name")} />
@@ -94,7 +104,11 @@ export default function EditWorkspaceForm({
           </Field>
           <Field>
             <FieldLabel htmlFor="description">Description</FieldLabel>
-            <Input id="description" {...register("description")} />
+            <Textarea
+              className="max-h-[200]"
+              id="description"
+              {...register("description")}
+            />
             {errors.description && (
               <FieldError errors={[{ message: errors.description.message }]} />
             )}

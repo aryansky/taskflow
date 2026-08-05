@@ -14,6 +14,8 @@ import { NavUser } from "../nav-user";
 import { Button } from "../button";
 import Link from "next/link";
 import { ArrowLeft, PackageCheck } from "lucide-react";
+import { ReadMore } from "../readmore";
+import WorkspaceImage from "@/app/(protected)/(main-nav)/workspaces/_components/WorkspaceImage";
 
 export type BreadcrumbType = {
   title: string;
@@ -23,6 +25,8 @@ export type BreadcrumbType = {
 export type LayoutProps = {
   heading?: string;
   headingClassName?: string;
+  workspaceImage?: string;
+  showWorkspaceImage?: boolean;
   description?: string;
   actions?: ReactNode;
   children: ReactNode;
@@ -39,6 +43,8 @@ export default function MainContainer({
   heading,
   headingClassName,
   description,
+  workspaceImage,
+  showWorkspaceImage,
   actions,
   breadcrumbs,
   backPath,
@@ -99,13 +105,29 @@ export default function MainContainer({
         <Separator orientation="horizontal" className=" h-4" />
         <div className="w-full overflow-auto">
           <div className="w-full md:w-[98%] mx-auto p-6">
-            <div className="flex justify-between items-center">
-              {heading && (
-                <PageTitle className={headingClassName}>{heading}</PageTitle>
+            <div className="flex items-center gap-4">
+              {showWorkspaceImage && (
+                <div className="w-[125] h-[100]">
+                  <WorkspaceImage
+                    size={100}
+                    imageUrl={workspaceImage ?? null}
+                  />
+                </div>
               )}
-              {actions}
+              <div className="w-full">
+                <div className="flex justify-between items-center">
+                  {heading && (
+                    <PageTitle className={headingClassName}>
+                      {heading}
+                    </PageTitle>
+                  )}
+                  {actions}
+                </div>
+                {description && (
+                  <ReadMore text={description} amountOfWords={64} />
+                )}
+              </div>
             </div>
-            {description && <h3>{description}</h3>}
             {children}
           </div>
         </div>

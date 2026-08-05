@@ -16,13 +16,14 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 
 import z from "zod";
 import { createWorkspace } from "../../../workspaces/[id]/actions";
 import { useRouter } from "next/navigation";
 import { createWorkspaceSchema } from "@/app/(protected)/workspaces/[id]/schema";
 import { Textarea } from "@/components/ui/textarea";
+import WorkspaceImage from "./WorkspaceImage";
 
 export default function CreateWorkspaceForm({
   onSuccess,
@@ -33,6 +34,7 @@ export default function CreateWorkspaceForm({
     register,
     handleSubmit,
     setError,
+    control,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<z.infer<typeof createWorkspaceSchema>>();
@@ -59,6 +61,12 @@ export default function CreateWorkspaceForm({
     }
   };
 
+  const imageSrc = useWatch({
+    control,
+    name: "imageUrl",
+    defaultValue: "",
+  });
+
   return (
     <DialogContent className="sm:max-w-sm">
       <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
@@ -66,6 +74,9 @@ export default function CreateWorkspaceForm({
           <DialogTitle>Create Workspace</DialogTitle>
         </DialogHeader>
         <FieldGroup>
+          <div className="w-full h-[125] flex justify-center my-2">
+            <WorkspaceImage size={125} imageUrl={imageSrc ?? null} />
+          </div>
           <Field>
             <FieldLabel htmlFor="name">Name</FieldLabel>
             <Input id="name" {...register("name")} />

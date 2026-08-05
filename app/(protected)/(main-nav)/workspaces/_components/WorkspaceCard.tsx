@@ -8,7 +8,7 @@ interface WorkspaceCardProps {
 import { Badge } from "@/components/ui/badge";
 import WorkspaceImage from "./WorkspaceImage";
 import prisma from "@/lib/prisma";
-import { Dot, UserRound, UsersRound } from "lucide-react";
+import { UserRound, UsersRound } from "lucide-react";
 
 export default async function WorkspaceCard({
   workspaceId,
@@ -23,8 +23,8 @@ export default async function WorkspaceCard({
   return (
     <>
       <div className="w-full flex p-6 rounded-lg bg-neutral-200 dark:bg-neutral-800 hover:scale-101 transition">
-        <div className=" w-[75] h-[50]">
-          <WorkspaceImage imageUrl={imageUrl} />
+        <div className="w-[75] h-[50]">
+          <WorkspaceImage size={50} imageUrl={imageUrl} />
         </div>
         <div className="w-full">
           <div className="flex justify-between items-center w-full">

@@ -31,29 +31,18 @@ export default async function Workspace({
       backPath={"/workspaces"}
       user={session.user}
       heading={workspace.name}
+      workspaceImage={workspace.imageUrl ?? undefined}
+      showWorkspaceImage={true}
+      description={workspace.description ?? undefined}
       actions={
-        <div className="flex gap-4 p-4 pb-0">
-          {membership.role === "OWNER" && (
-            <EditWorkspaceDialog
-              workspaceDescription={workspace.description}
-              workspaceImageUrl={workspace.imageUrl}
-              workspaceName={workspace.name}
-              workspaceId={workspace.id}
-            />
-          )}
-          <Button asChild>
-            <Link href={`/workspaces/${workspace.id}/invites`}>Invites</Link>
-          </Button>
-          <Button asChild>
-            <Link href={`/workspaces/${workspace.id}/members`}>members</Link>
-          </Button>
-          <Button asChild>
-            <Link href={`/workspaces/${workspace.id}/new-task`}>new task</Link>
-          </Button>
-          <Button asChild>
-            <Link href={`/workspaces/${workspace.id}/promote`}>promote</Link>
-          </Button>
-        </div>
+        membership.role === "OWNER" && (
+          <EditWorkspaceDialog
+            workspaceDescription={workspace.description}
+            workspaceImageUrl={workspace.imageUrl}
+            workspaceName={workspace.name}
+            workspaceId={workspace.id}
+          />
+        )
       }
     >
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 my-6">

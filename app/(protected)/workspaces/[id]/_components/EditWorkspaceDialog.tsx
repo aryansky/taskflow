@@ -22,8 +22,8 @@ export default function EditWorkspaceDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size={"icon-lg"}>
-          <Edit />
+        <Button variant="outline" size={"default"}>
+          <Edit /> Edit
         </Button>
       </DialogTrigger>
       <EditWorkspaceForm
