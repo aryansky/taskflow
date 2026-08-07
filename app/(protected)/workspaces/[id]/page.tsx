@@ -3,10 +3,12 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { requireWorkspaceMember } from "@/lib/workspace/guards";
 import { getWorkspaceWithTasks } from "@/lib/workspace/queries";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import EditWorkspaceDialog from "./_components/EditWorkspaceDialog";
 import TaskCard from "../../tasks/_components/TaskCard";
 import MainContainer from "@/components/ui/layout/main-container";
+import { Input } from "@/components/ui/input";
+import { Plus } from "lucide-react";
 
 export default async function Workspace({
   params,
@@ -21,6 +23,15 @@ export default async function Workspace({
   if (!workspace) notFound();
 
   const membership = await requireWorkspaceMember(workspace.id);
+
+  const isOwnerOrAdmin =
+    membership.role === "ADMIN" || membership.role === "OWNER";
+
+  const workspaceTasks = isOwnerOrAdmin
+    ? workspace.tasks
+    : workspace.tasks.filter(
+        (task) => task.assignedTo.email === session.user.email,
+      );
 
   return (
     <MainContainer
@@ -45,23 +56,40 @@ export default async function Workspace({
         )
       }
     >
-      <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 my-6">
-        {workspace.tasks.length === 0 ? (
-          <h2 className="text-2xl font-semibold my-6">No tasks found</h2>
-        ) : (
-          workspace.tasks.map((task) => {
-            return (
-              <Link href={`/tasks/${task.id}`} key={task.id}>
+      <section className="flex flex-col my-6">
+        <div className="flex gap-4 items-center justify-between border rounded-2xl py-2 px-6 mt-8 bg-card text-card-foreground">
+          <h2 className="font-bold text-2xl">Tasks</h2>
+          <div className="flex items-center gap-2">
+            <Input placeholder="Search" disabled className="max-w-xs" />
+            {isOwnerOrAdmin && (
+              <Link
+                href={`/workspaces/${workspace.id}/new-task`}
+                className={buttonVariants({ variant: "default", size: "sm" })}
+              >
+                <Plus /> New Task
+              </Link>
+            )}
+          </div>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 my-4">
+          {workspaceTasks.length === 0 ? (
+            <h2 className="text-xl font-semibold my-6">No tasks found</h2>
+          ) : (
+            workspaceTasks.map((task) => {
+              return (
+                // <Link href={`/tasks/${task.id}`} key={task.id}>
                 <TaskCard
                   {...task}
+                  key={task.id}
                   taskId={task.id}
                   assignedToEmail={task.assignedTo.email}
                   createdByEmail={task.createdBy.email}
                 />
-              </Link>
-            );
-          })
-        )}
+                // </Link>
+              );
+            })
+          )}
+        </div>
       </section>
     </MainContainer>
   );

@@ -20,7 +20,7 @@ export default function WorkspaceImage({
     <img
       src={imageSrc || "/default-workspace.png"}
       alt="Workspace preview"
-      className="rounded-full"
+      className="rounded-full block"
       style={{ width: `${size}px`, height: `${size}px` }}
       onError={() => setImageSrc("/default-workspace.png")}
     />

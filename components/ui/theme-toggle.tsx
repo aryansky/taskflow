@@ -20,7 +20,7 @@ export function ThemeToggle() {
   return (
     <Button
       variant="outline"
-      size="icon"
+      size="icon-sm"
       onClick={() => setTheme(isDark ? "light" : "dark")}
       aria-label="Toggle theme"
       className="rounded-full"

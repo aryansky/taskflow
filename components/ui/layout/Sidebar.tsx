@@ -22,10 +22,11 @@ export function SidebarItem({ icon, title, href, isActive }: SidebarItemType) {
       href={href}
       className={cn(
         buttonVariants({
-          variant: isActive ? "secondary" : "ghost",
+          variant: isActive ? "default" : "ghost",
           size: "lg",
         }),
-        "w-full rounded-lg text-md flex justify-center lg:justify-start mb-1",
+        !isActive && "dark:hover:bg-neutral-900",
+        "w-full rounded-2xl lg:px-4 flex justify-center lg:justify-start mb-1",
       )}
     >
       {Icon ? <Icon /> : <p className="inline lg:hidden">{title[0]}</p>}
@@ -50,7 +51,11 @@ export function Sidebar({
   const pathname = usePathname();
 
   return (
-    <aside className={cn("h-screen flex-col hidden md:flex w-[75] lg:w-[250]")}>
+    <aside
+      className={cn(
+        "h-screen bg-sidebar text-sidebar-foreground flex-col hidden md:flex w-[75] lg:w-[250]",
+      )}
+    >
       <header className="flex justify-start items-center gap-4 p-4">
         {backPath ? (
           <div className="w-full h-full flex justify-center lg:justify-start lg:px-2 items-center">
@@ -62,8 +67,10 @@ export function Sidebar({
           </div>
         ) : (
           <div className="w-full flex justify-center lg:justify-start items-center gap-1 px-2">
-            <PackageCheck size={28} />
-            <h1 className="font-bold text-2xl hidden lg:inline">TaskFlow</h1>
+            <PackageCheck className="text-primary" size={28} />
+            <h1 className="font-bold text-primary text-2xl hidden lg:inline">
+              TaskFlow
+            </h1>
           </div>
         )}
       </header>

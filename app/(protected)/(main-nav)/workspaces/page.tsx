@@ -31,41 +31,45 @@ export default async function AllWorkspaces() {
         <h2 className="text-xl tracking-tight font-semibold text-wrap mt-2">
           Your Workspaces
         </h2>
-        {createdWorkspaces.map((w) => {
-          return (
-            <Link
-              className="my-1"
-              href={`/workspaces/${w.workspace.id}`}
-              key={w.id}
-            >
-              <WorkspaceCard
-                workspaceId={w.workspace.id}
-                imageUrl={w.workspace.imageUrl}
-                description={w.workspace.description}
-                name={w.workspace.name}
-              />
-            </Link>
-          );
-        })}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-4 my-2">
+          {createdWorkspaces.map((w) => {
+            return (
+              <Link
+                className="rounded-3xl"
+                href={`/workspaces/${w.workspace.id}`}
+                key={w.id}
+              >
+                <WorkspaceCard
+                  workspaceId={w.workspace.id}
+                  imageUrl={w.workspace.imageUrl}
+                  description={w.workspace.description}
+                  name={w.workspace.name}
+                />
+              </Link>
+            );
+          })}
+        </div>
         <h2 className="text-xl tracking-tight font-semibold text-wrap mt-4">
           Other Workspaces
         </h2>
-        {joinedWorkspaces.map((w) => {
-          return (
-            <Link
-              className="my-1"
-              href={`/workspaces/${w.workspace.id}`}
-              key={w.id}
-            >
-              <WorkspaceCard
-                workspaceId={w.workspace.id}
-                imageUrl={w.workspace.imageUrl}
-                description={w.workspace.description}
-                name={w.workspace.name}
-              />
-            </Link>
-          );
-        })}
+        <div className="grid grid-cols-1 lg:grid-cols-2  gap-4 my-2">
+          {joinedWorkspaces.map((w) => {
+            return (
+              <Link
+                className="rounded-3xl"
+                href={`/workspaces/${w.workspace.id}`}
+                key={w.id}
+              >
+                <WorkspaceCard
+                  workspaceId={w.workspace.id}
+                  imageUrl={w.workspace.imageUrl}
+                  description={w.workspace.description}
+                  name={w.workspace.name}
+                />
+              </Link>
+            );
+          })}
+        </div>
       </section>
     </MainContainer>
   );

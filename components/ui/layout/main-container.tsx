@@ -52,8 +52,8 @@ export default function MainContainer({
   children,
 }: LayoutProps) {
   return (
-    <div className="w-full h-screen md:p-2 md:pl-0">
-      <div className="w-full h-full flex flex-col bg-[#fafafa] dark:bg-[#121212] md:border md:rounded-xl">
+    <div className="w-full h-screen bg-sidebar md:p-2 md:pl-0">
+      <div className="w-full h-full bg-background flex flex-col md:shadow-sm md:rounded-2xl">
         <header className="w-full flex items-center justify-between px-2 md:py-3 md:px-8">
           <div>
             <Breadcrumb className="hidden md:block">
@@ -90,8 +90,8 @@ export default function MainContainer({
               </div>
             ) : (
               <div className="w-full flex justify-start md:hidden items-center gap-1 px-2">
-                <PackageCheck size={28} />
-                <h1 className="font-bold text-2xl">TaskFlow</h1>
+                <PackageCheck className="text-primary" size={28} />
+                <h1 className="font-bold text-2xl text-primary">TaskFlow</h1>
               </div>
             )}
           </div>
